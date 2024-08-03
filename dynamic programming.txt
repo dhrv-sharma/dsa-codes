@@ -1,0 +1,1129 @@
+// in eery question just think what you will do when you reach at the base conditon 
+q1...
+static long f(int n,long dp[]){
+        if(n<=1){
+            return n;
+        }
+        if(dp[n]!=-1)
+            return dp[n];
+        return dp[n]=(f(n-1,dp)+f(n-2,dp))%(long)(1e9+7);
+    }
+    static long topDown(int n) {
+        // code here
+        long dp[]=new long[n+1];
+        Arrays.fill(dp,-1);
+        return f(n,dp);
+    }
+    
+    
+    static long bottomUp(int n) {
+        // code here
+        long prev=1;
+        long secPrev=0;
+        for(int i=2;i<=n;i++){
+            long curr=(prev+secPrev)%(long)(1e9+7);;
+            secPrev=prev;
+            prev=curr;
+        }
+        
+        return prev;
+    }
+
+
+
+q2. 
+class Solution {
+    public int climbStairs(int n) {
+
+        // when you reach at destination it means way possible 
+        int zero=1;
+
+        // when we are at first stair so only single jump can be performed
+        int first=1;
+
+
+        // i represent stair 
+
+        for(int i=2;i<n+1;i++){
+            // when we are at stair i 
+            // left single jump 
+            // right double jump
+            int way= zero +first;
+            zero = first;
+            first = way;
+        }
+
+        return first;
+
+        
+    }
+}
+
+q3.
+import java.util.* ;
+
+
+import java.io.*; 
+public class Solution {
+
+    static int dp[];
+    public static int frogJump(int n, int heights[]) {
+
+        // you have n stairs 
+
+        // Write your code here..
+        dp=new int[n+1];
+        Arrays.fill(dp,-1);
+
+
+        return possibleJumps(n-1, heights);
+    }
+
+
+    public static int possibleJumps(int index,int heights[]){
+        if(index==0){
+            return 0;
+        }
+
+        if(dp[index]!=-1){
+            return dp[index];
+        }
+
+        int left=possibleJumps(index-1, heights) + Math.abs(heights[index] - heights[index-1]);
+        int right=Integer.MAX_VALUE;
+        if(index>1){
+             right=possibleJumps(index-2, heights)+ Math.abs(heights[index] - heights[index-2]);
+        }
+
+        return dp[index]=Math.min(left, right);
+    }
+
+
+}
+
+
+q5. 
+class Solution {
+    int dp[];
+
+    public int rob(int[] nums) {
+        // memoization
+        dp = new int[nums.length + 1];
+        Arrays.fill(dp, -1);
+
+        // length-1 because last element index
+        return pickNonAdjacent(nums.length - 1, nums);
+
+    }
+
+    int pickNonAdjacent(int index, int[] nums) {
+        if (index == 0) {
+            // at index 0 we have only option to select it as it reaced here because 1 index
+            // not selected
+            return nums[0];
+        }
+
+        if (index < 0) {
+            // never to be selceed so zero
+            return 0;
+        }
+
+        if (dp[index] != -1) {
+            // meoization picked
+            return dp[index];
+        }
+
+        // pick element so sum will increase hence index-1 cant be selected
+        int pick = nums[index] + pickNonAdjacent(index - 2, nums);
+
+        // non pick elemetns no change hence index-1 can be selceted
+        int nonPick = pickNonAdjacent(index - 1, nums);
+
+        // we need max sum
+        dp[index] = Math.max(pick, nonPick);
+
+        return dp[index];
+    }
+
+}
+
+
+
+q6.
+class Solution {
+
+    public int rob(int[] nums) {
+
+        // if size == 1return that element
+        if (nums.length == 1) {
+            return nums[0];
+        }
+
+        // create two differenet dp
+        // dp[index] gives f(index) means max sum possible till that index
+        int dp1[] = new int[nums.length]; // for last included
+        int dp2[] = new int[nums.length]; // for frist included
+
+        Arrays.fill(dp1, -1);
+        Arrays.fill(dp2, -1);
+
+        int[] lastIncluded = Arrays.copyOfRange(nums, 1, nums.length);
+        int[] firstIncluded = Arrays.copyOfRange(nums, 0, nums.length - 1);
+
+        int max = Math.max(circularNonAdjacent(lastIncluded.length - 1, lastIncluded, dp1),
+                circularNonAdjacent(firstIncluded.length - 1, firstIncluded, dp2));
+
+        return max;
+
+    }
+
+    // similar function to robber 1
+    int circularNonAdjacent(int index, int[] nums, int[] dp) {
+
+        if (index == 0) {
+            return nums[0];
+        }
+        if (index < 0) {
+            return 0;
+        }
+        if (dp[index] != -1) {
+            return dp[index];
+        }
+
+        // element picked
+        int pick = nums[index] + circularNonAdjacent(index - 2, nums, dp);
+
+        // element not picked
+        int nonPick = circularNonAdjacent(index - 1, nums, dp);
+        dp[index] = Math.max(pick, nonPick);
+        return dp[index];
+
+    }
+}
+
+
+q7.
+
+
+tabulation : 
+import java.util.Arrays;
+
+public class Solution {
+    public static int ninjaTraining(int n, int points[][]) {
+
+        // Write your code here..
+        int dp[][]=new int[n][4];
+        for(int i=0;i<points.length;i++){
+            Arrays.fill(dp[i], -1);
+        }
+
+
+        // dp[day][last] array consists of f(day,last) tells you the maxPoint earned on this day if day-1 task performed was last 
+        // last can be 0 ,1 ,2 ,3
+        //  0 wil be task 1
+        // 1 will be task 2
+        // 2 will be task 3
+        //  3 will be no task 
+
+        //  first day 
+        // Initialize the first day's maximum points based on the available choices
+        dp[0] [0]=Math.max(points[0][1], points[0][2]);
+        dp[0] [1]=Math.max(points[0][0], points[0][2]);
+        dp[0] [2]=Math.max(points[0][0], points[0][1]);
+        dp[0] [3]=Math.max(points[0][0], Math.max(points[0][1], points[0][2]));
+
+        
+        // Iterate through each day and each activity basec on available choices
+        for(int day=1;day<n;day++){
+            for(int last=0;last<4;last++){
+                // Initialize the maximum points for the current day and last activity
+                // Consider each possible task for the current day
+                dp[day][last]=0;
+                // if day = 1 and you perform task 1 on day 0 option avail  task 0 and task 2
+                 // if day = 1 and you perform task 2 on day 0 option avail  task 1 and task 0
+                // if day = 1 and you perform task 0 on day 0 option avail  task 1 and task 2
+
+
+                for(int task=0;task<3;task++){
+                    // we atart selecting from the available choices 
+                    // for day 1 last 1 you choose task 0
+                    // dp[0][0] will give the max frofit as on day zero you can perform task 1 or otask 2 
+                    // Ensure that the current task is different from the last
+                    // Calculate the points for the current activity and add it to the maximum points from the previous day
+                    if(task!=last){
+                        int pts=points[day][task] + dp[day-1][task];
+                         // Update the maximum points for the current day and last activity
+                        dp[day][last]=Math.max(dp[day][last], pts);
+                    }
+                }
+                
+            }
+        }
+
+
+        return dp[n-1][3];
+
+
+    }
+
+}
+
+memoization :
+
+import java.util.Arrays;
+
+
+public class Solution {
+    static int dp[][];
+    public static int ninjaTraining(int n, int points[][]) {
+        // Write your code here..
+        dp=new int [n][4];
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i], -1);
+        }
+
+
+        return maxPoints(n-1,3,points);
+    }
+
+
+    static int maxPoints(int day,int last,int points[][]){
+
+        
+        if(day==0){
+            int max=0;
+            for(int i=0;i<3;i++){
+                if(i!=last){
+                    max=Math.max(points[0][i], max);
+                }
+            }
+            dp[day][last]=max;
+
+            return max;
+        }
+
+        if(dp[day][last]!=-1){
+            return dp[day][last];
+        }
+
+        
+
+        int max=0;
+        for(int i=0;i<3;i++){
+            if(i!=last){
+                int pts=points[day][i] + maxPoints(day-1, i, points);
+                max=Math.max(pts, max);
+                dp[day][last]=max;
+            }
+
+        }
+
+        return dp[day][last];
+    }
+
+}
+
+q8. 
+ 
+class Solution {
+
+    // dp stores the dp[m][n] stores f(m,n) the max way from (m,n) to zero
+    int dp[][];
+
+    public int uniquePaths(int m, int n) {
+        dp = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        // following array indexing
+        return maxWay(m - 1, n - 1);
+
+    }
+
+    int maxWay(int row, int col) {
+
+        // reach final destination return one way
+        if (row == 0 && col == 0) {
+            return 1;
+        }
+
+        // out of area so return 0 no way
+        if (row < 0 || col < 0) {
+            return 0;
+        }
+
+        // memoization
+        if (dp[row][col] != -1) {
+            return dp[row][col];
+        }
+
+        // top movement hence row -1
+        int topM = maxWay(row - 1, col);
+        // left movement hence col - 1
+        int rightM = maxWay(row, col - 1);
+
+        // imagine [0,0] and [1,1]
+        // so topM gives one way
+        // so leftM gives one way
+        dp[row][col] = topM + rightM;
+        // sum of both way
+        return dp[row][col];
+
+    }
+}
+
+q9. 
+class Solution {
+    // sane concept like previous question
+    int dp[][];
+
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int row = obstacleGrid.length;
+        int col = obstacleGrid[0].length;
+        dp = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        return maxWay(row - 1, col - 1, obstacleGrid);
+
+    }
+
+    int maxWay(int row, int col, int[][] obstacleGrid) {
+        // condtion wheather obstacle occured or not if occured cancel the way
+        if (row >= 0 && col >= 0 && obstacleGrid[row][col] == 1) {
+            return 0;
+        }
+
+        if (row == 0 && col == 0) {
+            return 1;
+        }
+
+        if (row < 0 || col < 0) {
+            return 0;
+        }
+
+        if (dp[row][col] != -1) {
+            return dp[row][col];
+        }
+
+        // up movement
+        int topM = maxWay(row - 1, col, obstacleGrid);
+        // left movement
+        int leftM = maxWay(row, col - 1, obstacleGrid);
+        dp[row][col] = topM + leftM;
+        return dp[row][col];
+    }
+}
+
+
+q10.
+class Solution {
+
+    // dp[row][col] contains the value of funct(row,col) means path value from (0,0)
+    // to (row-1,col-1)
+    int dp[][];
+
+    public int minPathSum(int[][] grid) {
+
+        // assigning the value to dp -1
+        int row = grid.length;
+        int col = grid[0].length;
+        dp = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        return minPath(grid, row - 1, col - 1);
+
+    }
+
+    // return min path fron(row,col) to (0,0)
+    int minPath(int[][] grid, int row, int col) {
+
+        // reached final destination
+        if (row == 0 && col == 0) {
+            return grid[0][0];
+        }
+
+        // out of area so we return a larger number so that it become a long path
+        if (row < 0 || col < 0) {
+            return (int) 1e9;
+        }
+
+        // memoization
+        if (dp[row][col] != -1) {
+            return dp[row][col];
+        }
+
+        // up movement
+        int up = grid[row][col] + minPath(grid, row - 1, col);
+        // left movement
+        int left = grid[row][col] + minPath(grid, row, col - 1);
+
+        // assigning min path value
+        dp[row][col] = Math.min(up, left);
+
+        // return min path value
+        return dp[row][col];
+
+    }
+}
+
+
+q11.
+class Solution {
+    // basically dp contains the value of funct(row,col) means min cost (0,0) to
+    // (row-1,col-1)
+    int dp[][];
+
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int row = triangle.size();
+        dp = new int[row][row];
+
+        for (int i = 0; i < row; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        // start from (0,0)
+        return minPath(triangle, 0, 0);
+
+    }
+
+    // return the min cost from (0,0) to (row,col)
+    // used bottom down approach
+    // prevois question we use top down approach
+    int minPath(List<List<Integer>> triangle, int row, int col) {
+
+        // we reach our destination when we reach on last row and at any col
+        // we will never go out of the bound
+        if (row == triangle.size() - 1) {
+            return triangle.get(row).get(col);
+        }
+
+        // memoization
+        if (dp[row][col] != -1) {
+            return dp[row][col];
+        }
+
+        // bottom movement
+        int bottom = triangle.get(row).get(col) + minPath(triangle, row + 1, col);
+
+        // diagonal movement
+        int diagonal = triangle.get(row).get(col) + minPath(triangle, row + 1, col + 1);
+
+        // required min cost path
+        dp[row][col] = Math.min(bottom, diagonal);
+
+        return dp[row][col];
+    }
+}
+
+
+q12. 
+class Solution {
+
+    // dp contains funct(row,col) which have the min path value from (n-1,[0,n-1])
+    // to (0,[0,n-1])
+    int dp[][];
+
+    public int minFallingPathSum(int[][] matrix) {
+        int row = matrix.length;
+
+        dp = new int[row][row];
+
+        for (int i = 0; i < row; i++) {
+            // asign Integer.MIN_VALUE as values are negative
+            Arrays.fill(dp[i], Integer.MIN_VALUE);
+        }
+
+        int min = Integer.MAX_VALUE;
+
+        // checking the all min vpath for each index of row 0 and then take min from
+        // there
+        for (int i = 0; i < row; ++i) {
+            min = Math.min(min, minPath(matrix, row - 1, i));
+
+        }
+
+        return min;
+
+    }
+
+    // return min path from (row,col) to (0,[0-matrix.length])
+    int minPath(int[][] matrix, int row, int col) {
+
+        // out of bond case so make that path value maximum
+        if (col < 0 || col >= matrix.length) {
+            return (int) 1e9;
+        }
+
+        // reached destination
+        if (row == 0) {
+            return matrix[row][col];
+        }
+
+        // memoization
+        if (dp[row][col] != Integer.MIN_VALUE) {
+            return dp[row][col];
+        }
+
+        // bottom movement
+        int bottom = matrix[row][col] + minPath(matrix, row - 1, col);
+        // diagonal left movement
+        int dgLeft = matrix[row][col] + minPath(matrix, row - 1, col - 1);
+        // digonal right movement
+        int dgRight = matrix[row][col] + minPath(matrix, row - 1, col + 1);
+
+        // return the min path value
+        dp[row][col] = Math.min(bottom, Math.min(dgLeft, dgRight));
+        return dp[row][col];
+
+    }
+}
+
+
+
+q13. 
+class Solution {
+    
+
+    // create an 3d array 
+    // dp[row][robA][robB] stores the value  of f(row,robA,robB) gives you the max berry can be collectoed from current position
+    int[][][] dp;
+
+    public int cherryPickup(int[][] grid) {
+        int row = grid.length;
+        int col = grid[0].length;
+
+        dp = new int[row][col][col];
+        
+        // assign 3d arrays with -1
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                Arrays.fill(dp[i][j], -1);
+
+            }
+        }
+        
+
+        // at every step f(row,robA,robB) gives you the max berry can be collectoed from current position
+        return collectBerry(grid, 0, 0, col - 1);
+
+    }
+    // row current row of both robot
+    // robA current clm of robot a 
+    // robB current clm of robot b
+    // row always be same because we start from zero row and every step we increament row
+    // retrun the max berry collected from both robots 
+    // move both robot simultaneosly
+    int collectBerry(int[][] matrix, int row, int robA, int robB) {
+
+        // out of bound case give negative large neagtive number so it never get selected
+        if (robA < 0 || robB < 0 || robA >= matrix[0].length || robB >= matrix[0].length) {
+            return (int) -1e8;
+        }
+        
+        // reacehd at the final row of the matrix means destination
+        if (row == matrix.length - 1) {
+            // both robot on same block so count 1
+            if (robA == robB) {
+                return matrix[row][robB];
+
+            }
+
+            // imagine yourself  on n-1 row and then max berry can be collected by both robots
+            return matrix[row][robA] + matrix[row][robB];
+        }
+        
+
+        // memoization
+        if (dp[row][robA][robB] != -1) {
+            return dp[row][robA][robB];
+        }
+        
+        // stores the current value
+        int current = 0;
+        // basically at particular postion we can have 9 ways both robot can move 
+        // so out of 9 we need max 
+        int max = Integer.MIN_VALUE;
+
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (robA == robB) {
+                    current = matrix[row][robA] + collectBerry(matrix, row + 1, robA + i, robB + j);
+
+                } else {
+                    current = matrix[row][robA] + matrix[row][robB] + collectBerry(matrix, row + 1, robA + i, robB + j);
+
+                }
+                max = Math.max(max, current);
+
+            }
+        }
+        
+
+        // return the max from this state 
+        return dp[row][robA][robB]=max;
+    }
+}
+
+
+
+q14. 
+import java.util.* ;
+
+
+public class Solution {
+    
+    // dp arrays to stores the answer f(index,target) contains the wheather there is subset exhist with target sum till index in arr
+    static int dp[][];
+    public static boolean subsetSumToK(int n, int k, int arr[]){
+        // Write your code here.
+        // there are n number in so there are n number only 
+        // for target we can assume the target can vary fom 0 - target so need to store  target  as well
+        dp=new int[n][k+1];
+
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i], -1);
+        }
+
+        // -1 not run for this value
+        // 0 false
+        // 1 true
+
+        if(solutionExhist(n-1, k, arr)==1){
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public static int solutionExhist(int index,int target,int arr[]){
+        // if target zero empty subsequence 
+        if(target==0){
+            return 1;
+        }
+        
+        // index ==0 means single element which is etiher eqaul to  the target 
+        if(index==0){
+            if (arr[index]==target) {
+                return 1;
+                
+            }
+            return 0;
+        }
+
+        
+
+        // memeoization
+        if(dp[index][target]!=-1){
+            return dp[index][target];
+        }
+
+        // not take this index element 
+        int notTake=solutionExhist(index-1, target, arr);
+        //  to take this element
+        int take=0;
+        // if the current element greater more than target then subsequence will definately make larger sum
+        if(arr[index]<=target){
+            // for left array we need subsequence which can make target - arr[index]
+            take=solutionExhist(index-1, target-arr[index], arr);
+        }
+        
+        dp[index][target]=0;
+
+        // we need to  proof subsequence exhist 
+        if(take==1 || notTake==1){
+            dp[index][target]=1;
+        }
+
+        return dp[index][target];
+
+    }
+}
+
+
+
+q15.
+class Solution {
+    // used to store the value of f(index,target) which gives the weather sum == target tile index in array
+    int dp[][];
+
+    public boolean canPartition(int[] nums) {
+        
+        // calculate sum
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+        }
+        
+        // if sum is not even then you cant divide odd sum into two equals part
+        if (sum % 2 != 0) {
+            return false;
+
+        }
+        // memoization we have store the value n index and also the target value act as an index 
+        dp = new int[nums.length][sum + 1];
+        for (int i = 0; i < nums.length; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        partition(nums, nums.length-1, sum/2);
+        
+        // if the full array can make half sum then we can divide into two equal partition
+        return dp[nums.length-1][sum/2]==1;
+
+    }
+    // funct(index,target) returns the wheather the target can be achieved from element till index in array
+    int partition(int[] nums, int index, int target) {
+        // if target is zero then you can make empty subset 
+        if (target == 0) {
+            return 1;
+        }
+        
+
+        // if index is zero then only one element left that means nums[0] only element can achieve target
+        if (index == 0) {
+            // target achieved
+            if (target == nums[0]) {
+                return 1;
+            }
+            return 0;
+        }
+        
+        // memeoization
+        if (dp[index][target] != -1) {
+            return dp[index][target];
+        }
+        
+        // not taking current index element
+        int notTake = partition(nums, index - 1, target);
+        // taking current index element 
+        int take = 0;
+        // if current index element  is greater than the target how can can we achieve target as greater become more greater
+        if (target >= nums[index]) {
+            take = partition(nums, index - 1,target - nums[index]);
+        }
+
+        // memoization
+
+        dp[index][target] = 0;
+
+        if (take == 1 || notTake == 1) {
+            dp[index][target] = 1;
+
+        }
+
+        return dp[index][target];
+    }
+}
+
+
+
+q16. longest common subsequence 
+class Solution {
+    // dp stores the function(indx1,indx2) which returns the the length of a common subsequence till indx1 for str1 and indx2 for str2
+    int dp[][];
+
+    public int longestCommonSubsequence(String text1, String text2) {
+        // memoization 
+        dp = new int[text1.length()][text2.length()];
+        for (int i = 0; i < dp.length; i++) {
+            Arrays.fill(dp[i], -1);
+
+        }
+        return lcs(text1, text1.length() - 1, text2, text2.length() - 1);
+
+    }
+    // returns the lcs till indx1 in string a and indx2 in string b
+    public int lcs(String txt1, int indx1, String txt2, int indx2) {
+        // any index is out of bound means no common subsequence 
+        if (indx1 < 0 || indx2 < 0) {
+            return 0;
+        }
+        
+        // memoization
+        if (dp[indx1][indx2] != -1) {
+            return dp[indx1][indx2];
+        }
+        
+        // character at this index are same hence are part of length of common subsequence 
+        // decreament both index index for next lcs element 
+        if (txt1.charAt(indx1) == txt2.charAt(indx2)) {
+            return dp[indx1][indx2] = 1 + lcs(txt1, indx1 - 1, txt2, indx2 - 1);
+        }
+        
+        // no character matches hence we have two option either we decrement indx1 or indx2
+        // chances that current character may occur common in other string 
+        return dp[indx1][indx2] = 0 + Math.max(lcs(txt1, indx1, txt2, indx2 - 1), lcs(txt1, indx1 - 1, txt2, indx2));
+
+    }
+}
+
+
+q17. longest pallindrome subsequence 
+class Solution {
+    // memoization
+    // stores the value of palLcs(s1,s2,indx1,indx2) which returns the max length of
+    // lcs till indx1 in s1 and indx2 in s2
+    int dp[][];
+
+    public int longestPalindromeSubseq(String s) {
+        int len = s.length();
+
+        dp = new int[len][len];
+        for (int i = 0; i < len; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+        // reverse a string
+        String s2 = "";
+        for (int i = len - 1; i >= 0; i--) {
+            s2 = s2 + s.charAt(i);
+
+        }
+        // loigc is we have to find pallindrome
+        // so s2=s1.reverse()
+        // now we find the max lcs in s1 and s2 which will be the longest pallindrome
+        return palLcs(s, s2, len - 1, len - 1);
+
+    }
+
+    // this function return the lcs in s1 till indx1 and in s2 till indx2
+    public int palLcs(String s1, String s2, int indx1, int indx2) {
+        // no lcs poosible
+        if (indx1 < 0 || indx2 < 0) {
+            return 0;
+        }
+        // memoization
+        if (dp[indx1][indx2] != -1) {
+            return dp[indx1][indx2];
+        }
+        // current characters are the part of subsequence
+        if (s1.charAt(indx1) == s2.charAt(indx2)) {
+            return dp[indx1][indx2] = 1 + palLcs(s1, s2, indx1 - 1, indx2 - 1);
+        }
+        // make out possible movements
+        return dp[indx1][indx2] = 0 + Math.max(palLcs(s1, s2, indx1 - 1, indx2), palLcs(s1, s2, indx1, indx2 - 1));
+
+    }
+}
+
+q18. min insertion to make string pallindrome 
+class Solution {
+    // dp stores the value of palCom(String s1,String s2,int indx1,int indx2) which
+    // return the length of lcs in s1 till index1 and in s2 till index2
+    int dp[][];
+
+    public int minInsertions(String s) {
+        // memoization
+        int len = s.length();
+        dp = new int[len][len];
+        for (int i = 0; i < len; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+        // so we have concept to find the longest pallindrome subsequence
+        // so just imagine in main string the longest pallindrome is balanced so we need
+        // to only balance the elemnts which are not pallindrome
+        String s2 = "";
+        for (int i = len - 1; i >= 0; i--) {
+            s2 += s.charAt(i);
+        }
+
+        return len - palCom(s, s2, len - 1, len - 1);
+
+    }
+
+    // value of palCom(String s1,String s2,int indx1,int indx2) which return the
+    // length of lcs in s1 till index1 and in s2 till index2
+    public int palCom(String s1, String s2, int indx1, int indx2) {
+        if (indx1 < 0 || indx2 < 0) {
+            return 0;
+        }
+
+        if (dp[indx1][indx2] != -1) {
+            return dp[indx1][indx2];
+        }
+
+        if (s1.charAt(indx1) == s2.charAt(indx2)) {
+            return dp[indx1][indx2] = 1 + palCom(s1, s2, indx1 - 1, indx2 - 1);
+        }
+
+        return dp[indx1][indx2] = 0 + Math.max(palCom(s1, s2, indx1, indx2 - 1), palCom(s1, s2, indx1 - 1, indx2));
+    }
+}
+
+
+q19.minimum deletion to make string equal
+class Solution {
+    // meomoization
+    // dp stores stores the value of longestLcs()
+    int dp[][];
+    public int minDistance(String word1, String word2) {
+        int len1=word1.length();
+        int len2=word2.length();
+        dp=new int[len1][len2];
+        // memoization
+        for(int i=0;i<len1;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        // eliminate the non element to make both string same 
+        // one delete counts one operations 
+        // len1- longestLcs() + len2-longestLcs()
+        return len1+len2 - 2*longestLcs(word1,word2,len1-1,len2-1);   
+    }
+    
+    // this function(s1,s2,indx1,indx2) return the longest lcs in s1 till indx1 and in s2 till indx2
+    public int longestLcs(String s1,String s2,int indx1,int indx2){
+        // no lcs possible
+        if(indx1<0 || indx2<0){
+            return 0;
+        }
+        // memoization
+        if(dp[indx1][indx2]!=-1){
+            return dp[indx1][indx2];
+        }
+        // current character are part of subsequence 
+        if(s1.charAt(indx1) == s2.charAt(indx2)){
+            return dp[indx1][indx2]=1+longestLcs(s1,s2,indx1-1,indx2-1);
+        }
+
+        // perform all possible soultions 
+        return dp[indx1][indx2]=0+Math.max(longestLcs(s1,s2,indx1,indx2-1),longestLcs(s1,s2,indx1-1,indx2));
+    }
+}
+
+
+
+q20. shortest supersequence 
+class Solution {
+    // used memoziation 
+    // in this question we are using 1 based indexing
+    // dp contains the f(s1,i1,s2,i2) value which means length of lcs in s1 till not (include) i1 in s1 and in s2 till i2
+    int dp[][];
+    public String shortestCommonSupersequence(String str1, String str2) {
+        
+        int len1=str1.length();
+        int len2=str2.length();
+        // last case would be complete array 
+        dp=new int[len1+1][len2+1];
+
+        for(int i=0;i<len1+1;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        
+        // filling out the dp array
+        int lenCommon=lcs(str1,len1,str2,len2);
+        String answer="";
+        int i=len1; // for accessing string 1 
+        int j=len2; // for accessing string 2 
+        // string will acces through i-1 and j-1 
+        // once we move left then current colmun cant be access
+        // col represent particular character in s2 
+        // once we move up then current row cant be access so that s1 character we need to add 
+        // row represent particular character in s1
+        while(i>0 && j>0){
+            // diagonal move 
+            if(str1.charAt(i-1)==str2.charAt(j-1)){
+                answer=str1.charAt(i-1)+answer;
+                i--;
+                j--;
+            }else if(dp[i-1][j] > dp[i][j-1] ){
+                // up  movement means s1 elements is getting left so need to include him
+                answer=str1.charAt(i-1) + answer;
+                i--;
+            }else{
+                // left movement measn s2 elements is getting left so need to include him
+                answer=str2.charAt(j-1) + answer;
+                j--;
+            }
+        }
+        // additional code apart from lcs printing 
+        /// if i>0 means s1 have some left elements 
+        while(i>0){
+            answer=str1.charAt(i-1) + answer;
+            i--;
+
+        }
+        // if j>0 means 2 have some left elemetns 
+        while(j>0){
+            answer=str2.charAt(j-1) + answer;
+            j--;
+            
+        }
+        return answer;
+        
+    }
+    // this function return the len of lcs till indx1 in str1 and indx2 inx2 in str2
+    // string is access by index-1
+    public int lcs(String str1,int indx1,String str2,int indx2){
+        if(indx1==0 || indx2==0){
+            return 0;
+        }
+
+        if(dp[indx1][indx2]!=-1){
+            return dp[indx1][indx2];
+        }
+
+        if(str1.charAt(indx1-1) == str2.charAt(indx2-1)){
+            return dp[indx1][indx2]  = 1+lcs(str1,indx1-1,str2,indx2-1);
+
+        }
+
+        return dp[indx1][indx2] = 0+Math.max(lcs(str1,indx1-1,str2,indx2),lcs(str1,indx1,str2,indx2-1));
+    }
+}
+
+
+q21. edit distance 
+class Solution {
+    // memoization 
+    // it contains the value of the minOpr(s1,i1,s2,i2) means min operation required to make s1==s2 till (indx1,indx2)(including)
+    int dp[][];
+    public int minDistance(String word1, String word2) {
+        int len1=word1.length();
+        int len2=word2.length();
+        dp=new int[len1][len2];
+        for(int i=0;i<len1;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        return minOpr(word1,len1-1,word2,len2-1);
+        
+    }
+    // min operation required to make s1==s2 till (indx1,indx2)(including)
+    // assume word1 > word2
+    public int minOpr(String word1,int indx1,String word2,int indx2){
+        // base case
+        //means word1 is over hence need to add insert all left elemtns of word2
+        if(indx1<0){
+            return indx2+1;
+        }
+        // means word2 is over hence need to delete all left eleemnts of word1
+        if(indx2<0){
+            return indx1+1;
+        }
+        // memoization
+        if(dp[indx1][indx2]!=-1){
+            return dp[indx1][indx2];
+        }
+        // condition
+        // character mataches hence no opr required move to another element 
+        if(word1.charAt(indx1)==word2.charAt(indx2)){
+            return dp[indx1][indx2]=0+minOpr(word1,indx1-1,word2,indx2-1);
+        }
+        
+        // perform all possible solutions 
+        // insert theoritcally we add elem after current elem hence current char in word2 match with the inserted element 
+        int insert=1+minOpr(word1,indx1,word2,indx2-1);
+        // delete theoritcally deleted we delete elem in word1 but there is no match 
+        int delete=1+minOpr(word1,indx1-1,word2,indx2);
+
+        // replace hence both the current character satisfied 
+        int replace=1+minOpr(word1,indx1-1,word2,indx2-1);
+        // return min
+        return dp[indx1][indx2]=Math.min(insert,Math.min(delete,replace));
+    }
+}

@@ -1,0 +1,1376 @@
+q1 . binary search
+public int search(int[] nums, int target) {
+        int low=0;
+        int high=nums.length-1;
+        int mid=0;
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+            if(nums[mid]==target){
+                return mid;
+
+            }else if(nums[mid]<target){
+                low=mid+1;
+
+            }else{
+                high=mid-1;
+            }
+            
+        }
+
+
+        return -1;
+        
+    }
+
+q2. lower bound 
+public static int lowerBound(int []arr, int n, int x) {
+        // Write your code here
+        // samllest indext is the smaller number according to the condition as array is sorted
+        // lower bound is basically smallest index arr[index]>=x
+
+        int low=0;
+        int high=n-1;
+        int lb=n;
+        int mid=0;
+
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+            if(arr[mid]>=x){
+                //  it means all the element on right will be greater than x but in left there might be some x 
+                high=mid-1;
+                lb=mid;
+            }else{
+                // it means element is less than x hence will get in right
+                low=mid+1;
+            }
+        }
+
+        return lb;
+    }
+
+q3. upper bound 
+public static int upperBound(int []arr, int x, int n){
+        // Write your code here.
+        // upper bound smalles index arr[index]>x;
+
+        int low=0;
+        int high=n-1;
+        int mid=0;
+        int ub=n;
+        
+        // if low > high array will not be in sorted manner now 
+        while(low<=high){
+            mid = low+(high-low)/2;
+            if(arr[mid]>x){
+                // no need to search in right part as it automatically greater 
+                // left will contain elemnt which can be greater than x ad smaller than arr[mid]
+                ub=mid;
+                high=mid-1;
+            }else{
+                low=mid+1;
+            }
+
+        }
+
+        return ub;
+    }
+
+
+q4 insert a number
+public int searchInsert(int[] nums, int target) {
+        // lowerBound is the index you are looking for 
+        // value will be inserted in that section where the lowerbound is there of target 
+
+        int low=0;
+        int high=nums.length-1;
+        int instIndex=nums.length;
+        int mid=0;
+
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+            if(nums[mid]==target){
+                instIndex=mid;
+                return mid;
+            }else if(nums[mid]>target){
+                instIndex=mid;
+                high=mid-1;
+
+            }else{
+                low=mid+1;
+
+            }
+        }
+
+        return instIndex;
+        
+    }
+
+
+q5 . call the floor
+public static int[] getFloorAndCeil(int[] a, int n, int x) {
+      // Write your code here.
+      // floor largest index arr[index]<=x
+      // ceil smallest index ar[index]>=x;
+
+      int floor=-1; // kind of concept
+      int ceil=n;// lower bound 
+
+      int low=0;
+      int high=n-1;
+      int mid=0;
+
+      int[] ans=new int[2];
+
+      // floor value
+      while (low<=high) {
+        mid=low+(high-low)/2;
+        if (a[mid]<=x) {
+          floor=mid;
+          low=mid+1;
+          
+        }else{
+          high=mid-1;
+        }
+        
+      }
+      ans[0]=floor == -1 ? -1: a[floor];
+      low=0;
+      high=n-1;
+      
+      // ceil value
+      while(low<=high){
+        mid=low+(high-low)/2;
+        if(a[mid]>=x){
+          high=mid-1;
+          ceil=mid;
+        }else{
+          low=mid+1;
+        }
+      }
+
+      ans[1]= ceil== n ? -1 : a[ceil];
+
+      return ans;
+
+      
+    }
+
+
+q6. find the first occurence and the last occurence of element 
+public int[] searchRange(int[] nums, int target) {
+        int []ans=new int[2];
+         ans[0]=lowBound(nums,target);
+         ans[1]=upBound(nums,target);
+
+        return ans;
+
+
+
+        
+    }
+
+    int upBound(int [] nums,int target){
+        int low=0;
+        int high=nums.length-1;
+        int mid=0;
+
+        int answer=nums.length;
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+
+            if(nums[mid]>target){
+                high=mid-1;
+                answer=mid;
+
+            }else{
+                low=mid+1;
+            }
+
+        }
+        
+        answer=answer-1;
+
+        // this condition for this question only 
+        answer= answer<0 ? -1 : nums[answer]==target ? answer: -1;
+
+        return answer;
+
+        
+        
+
+    }
+
+    int lowBound(int [] nums,int target){
+        int low=0;
+        int high=nums.length-1;
+        int mid=0;
+
+        int answer=nums.length;
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+
+            if(nums[mid]>=target){
+                high=mid-1;
+                answer=mid;
+
+            }else{
+                low=mid+1;
+            }
+
+        }
+
+        // this condition for this question only 
+        answer=  answer==nums.length ? -1 : nums[answer] == target ?  answer : -1;
+        return answer;
+
+
+        
+        
+
+    }
+
+
+q7. number of occurences
+public static int count(int arr[], int n, int k) {
+        //Your code goes here
+        // basically number of occurence 
+
+        int [] ans=new int[2];
+        ans[0]=firstOccurence(arr,n,k);
+        ans[1]=lastOccurence(arr,n,k);
+
+        if(ans[1]==-1){
+            return 0;
+
+        }
+
+        return ans[1]-ans[0]+1 ;
+
+
+
+
+    }
+
+
+    static int firstOccurence(int arr[],int n , int target){
+
+        int low=0;
+        int high=n-1;
+        int mid=0;
+        int first=-1;
+
+        while (low<=high) {
+
+            mid=low+(high-low)/2;
+            if (arr[mid]==target) {
+                first=mid;
+                high=mid-1;
+                
+            }else if (arr[mid]>target) {
+                high=mid-1;
+                   
+            }else{
+                low=mid+1;
+            }
+            
+        }
+
+
+
+
+        return first;
+
+
+    }
+
+    static int lastOccurence(int arr[],int n , int target){
+
+        int low=0;
+        int high=n-1;
+        int mid=0;
+        int last=-1;
+
+        while (low<=high) {
+
+            mid=low+(high-low)/2;
+            if (arr[mid]==target) {
+                last=mid;
+                low=mid+1;
+                
+            }else if (arr[mid]>target) {
+                high=mid-1;
+                   
+            }else{
+                low=mid+1;
+            }
+            
+        }
+
+
+        return last;
+
+
+    }
+
+
+q8. find element in rotated sorted array unique
+public int search(int[] nums, int target) {
+
+        // rotated sorted array is given with the unique elments
+
+        int low=0;
+        int high=nums.length-1;
+        int mid=0;
+        
+
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+            // checking the mid element 
+            if(nums[mid]==target){
+                return  mid;
+            }
+
+            // search space reduce 
+            // one half sorted confirm
+
+            
+
+            // left sorted array check
+            if(nums[low]<=nums[mid]){
+                if(nums[low]<=target && target<nums[mid]){
+                    // element in left sorted array
+                    high=mid-1;
+                    continue;
+                }
+                // element not in left sorted array
+                low=mid+1;
+                continue;
+            }
+
+            // right sorted 
+
+            if(nums[high]>=nums[mid]){
+                if(nums[mid]<target && target<= nums[high]){
+                    // element in right sorted part
+                    low=mid+1;
+                    continue;
+                }
+
+                // element is not present in right sorted part
+                high=mid-1;
+
+
+            }
+
+        }
+
+        return -1;
+        
+    }
+
+
+q9. element in rotated sorted array non unique
+public boolean search(int[] nums, int target) {
+        //  when not in the unqiue elements  bnart search cant give index it can tell it exhist 
+        int low=0;
+        int high=nums.length-1;
+        int mid=-1;
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+            if(nums[mid]==target){
+                return true;
+            }
+
+            // check wheather bothe half sorted or not 
+            // if yes then trim the search space 
+            if(nums[mid]== nums[low] && nums[mid]==nums[high]){
+                low=low+1;
+                high=high-1;
+                continue;
+            
+
+            }
+            
+
+            // check left part is sorted or not 
+            if(nums[low]<=nums[mid]){
+                // check element is there in left  sorted part
+                if(nums[low]<=target && nums[mid]>target){
+                    high=mid-1;
+                    continue;
+                }
+                // element is not there in left part
+                low=mid+1;
+
+            }else if(nums[mid]<=nums[high]){
+                // right half sorted
+
+                // element is in right sorted part
+                if(nums[mid]<target && nums[high]>=target){
+                    low=mid+1;
+                    continue;
+                }
+                // element in left part
+                high=mid-1;
+            }
+                
+        }
+
+        return false;
+        
+    }
+
+
+q10. minimum element of rotated and sorted array
+public int findMin(int[] nums) {
+
+        // rotated and sorted array means one part is sorted and another is sorted
+        // sorted part may contain min element or not 
+        // 
+
+        int low=0;
+        int high=nums.length-1;
+        int min=Integer.MAX_VALUE;
+        int mid=0;
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+
+            if(nums[low]<=nums[mid]){
+                // left sorted array 
+                // then minimumn value would be nums[low]
+                min=Math.min(min,nums[low]);
+
+                // taken left part min value go to right part
+                low=mid+1;
+
+            }else{
+                // rigth sorted array
+                // then minmium value would be nums[mid]
+
+                min=Math.min(min,nums[mid]);
+
+                // right side minimum value done 
+                // move to left part
+
+                high=mid-1;
+
+            }
+        }
+
+        return min;
+        
+    }
+
+
+q11. 
+public static int findKRotation(int []arr){
+        // Write your code here.
+        // index of minimum value of array 
+        int low=0;
+        int high=arr.length-1;
+        int mid=0;
+        int index=-1;
+        int minValue=Integer.MAX_VALUE;
+
+        while (low<=high) {
+            mid=low+(high-low)/2;
+
+            // making more optimal 
+            if(arr[low]<arr[high]){
+                if(arr[low]<minValue){
+                    minValue=Math.min(arr[low],minValue);
+                    index=low;
+                    break;
+                }
+            }
+
+            // left half sorted check
+            if(arr[low]<=arr[mid]){
+                // take min value of left part 
+                if(arr[low]<minValue){
+                    minValue=Math.min(arr[low], minValue);
+                    index=low;
+                }
+                // gor to right high
+                low=mid+1;
+            }else{
+                // right half  sorted check
+                // take min value of right part 
+                if(arr[mid]<minValue){
+                    minValue=Math.min(arr[mid], minValue);
+                    index=mid;
+                }
+                // gor to left half
+                high=mid-1;
+
+            }
+            
+        }
+
+        return index;
+
+    }
+
+
+q12. find the single occurence of element 
+public int singleNonDuplicate(int[] nums) {
+        // very element occur twice except for one elm find that elm
+        
+        
+        // end case 
+        // only one element  is there 
+        if(nums.length==1){
+            return  nums[0];
+        }
+        // first element is your first element
+        if(nums[0]!=nums[1]){
+            return nums[0];
+        }
+
+        // last element condition check 
+        if(nums[nums.length-1]!=nums[nums.length-2]){
+            return nums[nums.length-1];
+
+        }
+
+        int low=1;
+        int high=nums.length-2;
+        int mid=0;
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+
+            // checking is this the element 
+
+            if(nums[mid]!=nums[mid-1] && nums[mid]!=nums[mid+1]){
+                return nums[mid];
+            }
+
+        // now consider that elm so left part of the erray will have the elements 
+        // in even , odd pair means first elem is on even and second on odd index which are equal
+            if((mid%2==0 && nums[mid+1]==nums[mid]) || mid%2==1 && nums[mid-1]==nums[mid]){
+                // eleminate left part 
+                low=mid+1;
+                continue;
+            }
+        // if we are in right part then pair exhist in odd,even
+        //  means first elem index is on odd index and second on right index 
+            if((mid%2==1 && nums[mid+1]==nums[mid]) ||(mid%2==0 && nums[mid-1] ==nums[mid])){
+                high=mid-1;
+            }
+
+        }
+        
+        
+
+
+        return -1;
+        
+    }
+
+
+q13. peak of moutain
+public int findPeakElement(int[] nums) {
+        // use note book illustration properly 
+        // asume negative infinite at start and negative 
+        int n= nums.length;
+
+        if(n==1){
+            return 0;
+        }
+
+        // first element check 
+        if(nums[0]>nums[1]){
+            return 0;
+        }
+
+        // last element check 
+        if(nums[n-1]>nums[n-2]){
+            return n-1;
+        }
+
+        int low=1;
+        int high=n-2;
+        int mid=0;
+
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+
+            // getting on the peak 
+            if(nums[mid]>nums[mid-1] && nums[mid]>nums[mid+1]){
+                return mid;
+            }
+
+
+            if(nums[mid]>nums[mid-1]){
+                // increasing slope answer will be  on right side 
+                low=mid+1;
+
+
+            }else if(nums[mid]<nums[mid-1]){
+                // decreasing slope answer will be on left side 
+                high=mid-1;
+            }else if(nums[mid]<nums[mid-1] && nums[mid]<nums[mid+1]){
+                // we stuck on loop answer can be both in direction left or right 
+                // two peak can go in any direction 
+                high=mid-1;
+            }
+        }
+
+
+
+        return -1;
+
+        
+    }
+
+
+
+
+----------------------------------------------------------------
+q1. sqrt of n 
+class Solution {
+    public int mySqrt(int x) {
+        int low=1;
+        int high=x;
+        int mid=0;
+
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+            if((long)mid*mid==(long)x){
+                // found the value 
+                return mid;
+            }else if((long)mid*mid<(long)x){
+                // it means the mid * mid is on left hand side of answer hence eliminate left hand and move on right side
+                low=mid+1;
+            }else if((long)mid*mid>(long)x){
+                // it means the mid*mid is on right hand side of answer means eleminate the right hand and move on left hand
+                high=mid-1;
+            }
+        }
+
+
+        return high;
+
+        
+    }
+}
+
+q2. nth root 
+public class Solution {
+    public static int NthRoot(int pw, int target) {
+        // Write your code here.
+         
+        int low=1;
+        int high=target;
+        int mid=0;
+
+
+        // mid value can be the possible solution it referring 
+
+        while (low<=high) {
+            mid=low+(high-low)/2;
+
+            int op=mult(mid, pw, target);
+
+            if(op==0){
+                // we found the element 
+                return mid;
+            }else if(op==1){
+                // mid^pw is on right side of answer hence eliminate right hand move on left part
+                high=mid-1;
+            }else if(op==-1){
+                // mid^pw is on left side of answer hence eliminate left side so move on right hand side 
+                low=mid+1;
+            }
+            
+        }
+
+
+        return -1;
+    }
+    
+
+    // calculating the num^power untill it become greater or full iteration 
+    public static int mult(int num,int power,int target){
+        long answer=1;
+
+        for(int i=1;i<=power;i++){
+            answer=answer*num;
+            if(answer>target){
+                // return 1 answer > target
+                return 1;
+            }
+        }
+        
+        // return 0 if answer = target
+        if(answer==target){
+            return 0;
+        }
+        
+
+        // return -1 if answer < target
+   
+        return -1;
+    }
+}
+
+
+q3. koko eating bananas 
+class Solution {
+    public int minEatingSpeed(int[] piles, int deadLine) {
+        // piles[i] has number of banana 
+        // deadline is the time limit 
+        // k is eating rate of monkey
+        // return min(k) such that total time is <= deadline
+
+        Arrays.sort(piles);
+        int low=1;
+        int mid=0;// rate of eating banana
+        int high=piles[piles.length-1];
+        int answer=0;
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+            int totalTime=calcDuration(piles,mid);
+
+            if(totalTime<=deadLine){
+                // we need minimum rate hence move on left 
+                answer=mid;
+                high=mid-1;
+
+            }else{
+                // time taken greater than dealine so possible answer would be on right as we need highter rate  
+                low=mid+1;
+            }
+        }
+
+        return answer;
+        
+    }
+
+    public int calcDuration(int[] bananas ,int rate){
+        double answer=0;
+
+        // calculating total duration
+        for(int i=0;i<bananas.length;i++){
+            answer+=Math.ceil((double)bananas[i]/rate);
+
+        }
+        // ceil value of asnwer
+        return   (int) Math.ceil(answer);
+
+    }
+}
+
+
+q4.min of days for  number of bqt 
+class Solution {
+    public int minDays(int[] bloomDay, int nmBqt, int adFl) {
+        int[] dum=bloomDay.clone();
+
+        Arrays.sort(dum);
+
+        // bloomDay[i] refers to day at which floor bloomed 
+        // numBqt number of bqt 
+        // adFl
+
+
+        // minimzing the search space so the min element would be the first day naswer possible 
+        // max element would be the sure answer as at that day all flowers would be bloomed
+        int low=dum[0];
+        int high=dum[bloomDay.length-1];
+        int mid=0;
+        int answer =-1;
+        
+
+        // impossible case if the flowers in bloomDay are not enough
+        if(bloomDay.length< nmBqt*adFl){
+            return -1;
+        }
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+
+            if(possible(bloomDay,nmBqt,adFl,mid) == 1){
+                // hence answer is possible but we need minimum so move left 
+                high=mid-1;
+                answer =mid;
+
+            }else{
+                // days are not enough to build bqt so move right
+                low=mid+1;
+            }
+        }
+
+
+        return answer;
+
+
+
+        
+    }
+
+    public int possible(int [] days,int m ,int k,int currDay){
+        // m number of bqt
+        // k  nunber of adjacent flower
+        int count=0;
+        int numBqt=0;
+        for(int i=0;i<days.length;i++){
+            if(currDay>=days[i]){
+                // hence flower is bloomed so it is adjacent 
+                count++;
+
+            }else{
+                // flower is not bloomed adjacent broken 
+                numBqt+=count/k;
+
+                //new adjacent pairing
+                count=0;
+
+            }
+        }
+        // to check the last adjacent flower 
+        numBqt+=count/k;
+
+        if(numBqt>=m){
+            // hence required bqt can be achieved 
+            return 1;
+        }
+        
+
+        // hence required bqt cant be achieved
+        return 0;
+    }
+}
+
+
+q5 minimum divisor 
+class Solution {
+    public int smallestDivisor(int[] nums, int threshold) {
+        // in all qns bs is applied on answer range 
+        // range division 1 - max(nums) 
+        // if mid is > max(nums) then answer always be eqaul to nums.length (1+1+1+1+1.......)
+        Arrays.sort(nums);
+        int low=1;
+        int high=nums[nums.length-1];
+        int mid=0;
+        int answer=0;
+
+        while(low<=high){
+
+            // mid is the divisor 
+            mid=low+(high-low)/2;
+
+            int sum=0;
+
+            for(int i=0;i<nums.length;i++){
+                sum+=Math.ceil((double)nums[i]/mid);
+
+            }
+
+            if(sum<=threshold){
+                // mid is possible answer but for min we need to go left 
+                // so we need to increase sum by decreasing the  divisor
+                high=mid-1;
+                answer=mid;
+            }else{
+                // sum>threshold we need to lower down the sum 
+                // so we decrease the sum bu increasing the divisor 
+                low=mid+1;
+
+            }
+            
+        }
+
+
+        return answer;
+
+        
+    }
+}
+
+
+q6. min number of days to cargo 
+class Solution {
+    public int shipWithinDays(int[] weights, int days) {
+
+        // in such qns low always points to the required answer 
+        // array of wegihts given 
+        // array have to be shiped in <= days
+        // single day ship goes one time 
+        // min capacity to meet requirement 
+        // min capacity will be the max(arr) (one weight in single go )
+        // max capacity will be sum of array (all weights in sinlge go )
+        // order of package cant be change 
+
+        // range [max(arr) , sum(arr)]
+
+        int[] wgt=weights.clone();
+        Arrays.sort(wgt);
+
+        int sum=0;
+
+        for(int i=0;i<weights.length;i++){
+            sum+=weights[i];
+
+        }
+
+        int low=wgt[weights.length-1];
+        int high=sum;
+        int mid=0;
+        int answer =-1;
+
+        while(low<=high){
+            mid=low+(high-low)/2;
+
+            int reqDays=findDay(weights,mid);
+
+            if(reqDays<=days){
+                // hence it is one of the possible solution so we need to move left 
+                // eliminate right
+                high=mid-1;
+                answer=mid;
+            }else{
+                // taaking more time so increase capacity so move in right direction and eliminate  left
+                low=mid+1;
+            }
+        }
+
+
+        return answer;
+        
+    }
+
+    public int findDay(int [] weights,int capacity){
+        int load=0;
+        int day=1;
+        for(int i=0;i<weights.length;i++){
+            if((load+weights[i])>capacity){
+                // hence cant carry this one package limit exceed
+                load=weights[i];
+                day++;
+
+            }else{
+                // we can carry the load 
+                load+=weights[i];
+
+            }
+
+        }
+
+        return day;
+
+    }
+}
+
+q7 find the k th missing element 
+class Solution {
+    public int findKthPositive(int[] arr, int k) {
+        // basically arr have missing elements
+        // we have to find two numbers between which our k element would be
+        // our first step is to find how any number are missing at that index
+
+        int low = 0;
+        int high = arr.length - 1;
+        int mid = 0;
+
+        while (low <= high) {
+            mid = low + (high - low) / 2;
+
+            // now we have to calcualte how many number are missing at arr[mid]
+            // mid+1 as number [1,2,3,4,5.....]
+            int missing = (arr[mid] - (mid+1)) ;
+
+            if (missing < k) {
+                // it means that missing number at that point is less that required ith
+                // how can you get 5th missing number as at that point only three are missing
+                // for sure my anser is on right side
+                // eliminate left part
+                low = mid + 1;
+            } else {
+                // measn number f missing elements at this point is more thatn require than i th
+                // for eg if 10 elements are missing at this points and you want 5 th then go
+                // left
+                // eliminate right
+                high = mid - 1;
+            }
+        }
+
+        // low and high are the one who is pointing to the numbers wheere our element
+        // would
+        // low=high+1
+        // means number is missing between high and low
+        return k + high + 1;
+
+    }
+}
+
+
+
+q8. aggressive cows 
+class Solution {
+    public int maxDistance(int[] pos, int m) {
+        // pos[i] tells you the cordinate of the basket
+        // need to place m balls for sure
+        // m umber of balls
+        // magnetic force between two is pos[x] - pos[y]
+        // need to deliver the max of min distance between two balls all balls are
+        // placed
+
+        // need to sorted order order of positions
+        // you always move from nearest to farthest
+        Arrays.sort(pos);
+
+        int low = 1; // minimum ditance between two balls is 1
+        int high = pos[pos.length - 1] - pos[0];
+        int mid = 0;
+        int answer = -1;
+
+        while (low <= high) {
+            mid = low + (high - low) / 2;
+
+            if (canPlace(pos, mid, m) == true) {
+                // it means on of the possible solution
+                // nut we need max (min distance of two points)
+                // so move on right
+                low = mid + 1;
+                answer = Math.max(mid,answer);
+
+            } else {
+                // we cnt place the elements at this distance so need smaller distance so move
+                // left
+                high = mid - 1;
+            }
+        }
+
+        return answer;
+
+    }
+
+
+    boolean canPlace(int [] post,int minDistance,int nBall){
+        int count=1;// how many balls place
+        int lastPos=post[0]; // coordinate of last place ball which is placed at 0 index 
+
+        for(int i=0;i<post.length;i++){
+            if(post[i]-lastPos  >= minDistance){
+                //increasing count of number of balls
+                count++;
+                // updates the last positon 
+                lastPos=post[i];
+            }
+        }
+        
+        // have we place all the balls ?? 
+        if(count>=nBall){
+            return true;
+        }
+
+
+        return false;
+
+    }
+}
+
+
+q9. book allocation algorthm 
+
+import java.util.*;
+public class Solution {
+    public static int findPages(ArrayList<Integer> book, int n, int stud) {
+        // Write your code here.
+        // book means no of page in  book[i]
+        // allot book in such a way every student get a book
+        // continous allocation of books allocation process can be done for student at once 
+        // maxPage same for everyone 
+        // return min (maxPage per student )
+
+        int sum=0;
+
+        for(int item:book){
+            sum+=item;
+        }
+        
+        // for every book allocation max (book) is minimum otherwise how can someone else read book
+        int low=Collections.max(book);
+        // max possible only one student is there and he gets all the books 
+        int high=sum;
+        int mid=0;
+        int answer=-1;
+
+
+        // in case no of books is less  than sutdents
+        if (stud>book.size()) {
+            return -1;
+            
+        }
+
+        while (low<=high) {
+            mid=low+(high-low)/2;
+
+            // calculating how many student will required to read all book if maxpage per student is mid
+            int numbStud=calcStudent(book,mid);
+
+
+            if (numbStud>stud) {
+                // it means we are take more student 
+                // so increase max capacity per student move right 
+                low=mid+1;
+                
+            }else if(numbStud<stud){
+                // it means some student don get the book hence need to lower the capacity
+                // so decrease the max capacity per student move left 
+                high=mid-1;
+                answer=mid;
+
+            }else{
+                // student are equal 
+                // we need min of max capacity 
+                // so drop the max capacity
+                high =mid-1;
+                answer=mid;
+            } 
+        }
+
+        return answer;
+
+
+
+
+
+    }
+
+    
+    // calculating number of student require to complete all book according to maxpage per student limit
+    public static int  calcStudent(ArrayList<Integer> book,int maxPage){
+        int student=1;
+        int totPage=0;
+
+
+        for(int j=0;j<book.size();j++){
+
+            // student limit exceeded
+            if((totPage+book.get(j)) >maxPage){
+                student++;
+                totPage=book.get(j);
+            }else{
+                totPage+=book.get(j);
+            }
+        }
+
+
+        return student;
+
+    }
+}
+
+
+
+q10. minimum of maxSum of k subarray
+class Solution {
+    public int splitArray(int[] nums, int k) {
+        // split nums[] into sub k array 
+        // similar to dividing book into students 
+        // particular nums[i] to a sub array
+        // contonius allots to sub array
+        // every subarray should get something 
+        // min (maxSum(subarray))
+
+        // first clone the array
+        int [] arr=nums.clone();
+        // sort for maximum
+        Arrays.sort(arr);
+        
+
+        //  binary search is applied on the maxSum of subarrays 
+        // lowest maxSum of subbaray would be the  greateest element it self 
+        // if we take just one element
+        int low=arr[nums.length-1];
+
+
+        // maxSub array sum would be the sum of full array 
+        int high=0;
+        for(int i=0;i<nums.length;i++){
+            high+=nums[i];
+        }
+        int mid=0;
+
+        // return answers
+
+        int answer =-1;
+
+
+        // if  no. of subaarays requires is greater than nums.length 
+        // then  not possible 
+        if(k>nums.length){
+            return -1;
+        }
+
+
+        while(low<=high){
+            // maxSum right now 
+            mid=low+(high-low)/2;
+
+
+            //  calculate no of subarray required to make that maxSum possible 
+            int noSub=subarray(nums,mid);
+            
+            // no. of sub array is greater than required one 
+            // we need to increase maxSum 
+            if(noSub>k){
+                low=mid+1;
+
+            }else if(noSub<k){
+                // no of subarray is less than the required needed of subarrays 
+                // measn we need more maxSum
+                answer=mid;
+                high=mid-1;
+
+            }
+            else{
+                // we got the answer but we need minimum of maxSum
+                answer=mid;
+                high=mid-1;
+            }
+
+        }
+
+
+        return answer;
+        
+    }
+
+
+    public int subarray(int [] arr ,int maxSum){
+        int sum=0;
+        int noSub=1;
+        
+        // checking how many sub arrays is required to make maxSum
+        for(int i=0;i<arr.length;i++){
+            if(sum+arr[i] > maxSum){
+                // limit exceeded
+                sum=arr[i];
+                noSub++;
+
+            }else{
+                sum+=arr[i];
+
+            }
+        }
+
+
+        return noSub;
+
+    }
+}
+
+
+
+
+q11 . paitner problem 
+import java.util.*;
+
+public class Solution 
+{
+    public static int findLargestMinDistance(ArrayList<Integer> boards, int k)
+    {
+        //    Write your code here.
+        // same question 
+        // boards [i] unit of paint and also time to paint area
+        // k are number of painters 
+        // return minimum time to paint all board
+        // time taken to paint the whole is maxTime taken by painter to paint its area 
+        // so we apply binary seach on maxTime 
+        
+
+        // assume  painters   get only each one   block of area to paint so  maxtime will be the max(boards)
+        int low=Collections.max(boards);
+        int high=0;
+        int mid=0;
+        for(int itm:boards){
+            high+=itm;
+        }
+
+        int answer =-1;
+
+        if(k>boards.size()){
+            return -1;
+
+        }
+
+
+        while (low<=high) {
+            mid=low+(high-low)/2;
+            
+
+
+            // calculating how many painter will required to paint whole if maxtime is mid
+            // painter either take <= mid  time to pain ther area 
+            int painterReq=paint(boards,mid);
+
+            if(painterReq>k){
+                // hence at this maxtime we need more painter 
+                // hence need to increase maxTime 
+                low=mid+1;
+            }else if(painterReq<k){
+                // hence less painter required for the this work but to provide all painter block
+                // we need to deacrease maxtime 
+                // less time more people 
+                high=mid-1;
+                answer=mid;
+
+            }else{
+                // equals condition but possible that k pointer can finish the task with more less time 
+                high =mid-1;
+                // one of the possible answer 
+                answer =mid;
+
+            }
+
+            
+        }
+
+
+        return answer;
+
+
+
+
+    }
+
+
+
+    // calculate the painter to complete the work in this maxTime 
+    public static int paint(ArrayList<Integer> list,int maxTime){
+        int painter =1;
+        int time=0;
+
+        for (int index = 0; index < list.size(); index++) {
+
+            // painter limite get exceeded 
+            if((time+list.get(index)) > maxTime){
+                painter++;
+                time=list.get(index);
+
+            }else{
+                time+=list.get(index);
+            }
+            
+        }
+
+
+        return painter;
+
+    }
+}

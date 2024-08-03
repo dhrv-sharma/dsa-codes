@@ -1,0 +1,399 @@
+q1 .Arrays to LL
+// class Node {
+//     public int value;
+//     public Node next;
+
+//     public Node(int data,Node next){
+//         this.value=data;
+//         this.next=next;
+//     }
+
+//     public Node(int data){
+//         this.value=data;
+//         this.next=null;
+//     }
+
+    
+// }
+
+public class Solution {
+    public static Node constructLL(int []arr) {
+        // Write your code here
+
+        Node head=new Node(arr[0],null);
+        Node mover=head;
+        for(int i=1;i<arr.length;i++){
+            Node temp=new Node(arr[i]);
+            mover.next=temp;
+            mover=temp;
+
+        }
+
+        return head;
+    }
+}
+
+
+q2. Length of a linked list 
+/****************************************************************
+
+ Following is the class structure of the Node class:
+
+ class Node {
+     public int data;
+     public Node next;
+    
+     Node()
+     {
+         this.data = 0;
+         this.next = null;
+     }
+    
+     Node(int data)
+     {
+         this.data = data;
+         this.next = null;
+     }
+    
+     Node(int data, Node next)
+     {
+         this.data = data;
+         this.next = next;
+     }
+ }
+
+ *****************************************************************/
+
+public class Solution {
+    public static int length(Node head){
+        //Your code goes here
+        Node move=head;
+        int count =0;
+
+        while(move!=null){
+            count++;
+            move=move.next;
+        }
+
+
+        return count;
+    }
+}
+
+
+q3. search in a linked list 
+public static int searchInLinkedList(Node head, int k)
+    {
+        // Write Your Code Here.
+        Node move=head;
+
+        while (move!=null) {
+            if(move.data==k){
+                return 1;
+            }
+
+            move=move.next;
+            
+        }
+
+
+        return 0;
+    }
+
+
+q4. delete a node in the linked list 
+public void deleteNode(ListNode node) {
+        // using two pointers approach
+        ListNode pt1 = node;
+        ListNode pt2 = node;
+        pt2 = pt2.next;
+
+        while (pt2 != null) {
+            pt1.val = pt2.val;
+            if (pt2.next == null) {
+                break;
+            }
+            pt1 = pt2;
+            pt2 = pt2.next;
+        }
+
+        pt1.next=null;
+        
+
+    }
+
+
+
+q5 . insert in a new linked list
+ //Function to insert a node at the beginning of the linked list.
+    Node insertAtBeginning(Node head, int x)
+    {
+        if(head==null){
+            return new Node (x);
+        }
+        // code here
+        Node temp=new Node(x);
+        temp.next=head;
+        return temp;
+    }
+    
+    //Function to insert a node at the end of the linked list.
+    Node insertAtEnd(Node head, int x)
+    {
+        if(head==null){
+            return new Node (x);
+        }
+        // code here
+        Node mov=head;
+        
+        while(mov.next!=null){
+            
+            mov=mov.next;
+            
+        }
+        Node temp=new Node(x);
+        temp.next=null;
+        mov.next=temp;
+        return head; 
+    }
+
+
+
+q6. middle of linked list
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        int count=0;
+        ListNode temp=head;
+        while(temp!=null){
+            count++;
+            temp=temp.next;
+        }
+        int mid=(count/2)+1;
+        temp=head;
+        while(temp!=null){
+            mid--;
+            if(mid==0){
+                return temp;
+            }
+            temp=temp.next;
+        }
+
+
+        return temp;
+        
+    }
+}
+
+torto and haire algo
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode slow=head;
+        ListNode fast=head;
+        while(fast!=null && fast.next!=null ){
+            slow=slow.next;
+            fast=fast.next.next;
+        }
+
+        return slow;
+        
+    }
+}
+
+
+q7. reverse a linked list
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        ListNode temp=head;
+        ListNode prev=null;
+        ListNode front;
+        while(temp!=null){
+            // first step store the temp.next for next round
+            front=temp.next;
+            // now allter the link of temp
+            temp.next=prev;
+            // for next round prev would be temp
+            prev=temp;
+            // and temp would be front
+            temp=front;
+
+
+        }
+
+        return prev;
+
+        
+    }
+}
+
+
+q8. even and odd index seggregrate in LL
+class Solution {
+    public ListNode oddEvenList(ListNode head) {
+        // if list is empty or have single element then just return head
+        if(head==null || head.next==null){
+            return head;
+        }
+        // odd list link
+        ListNode odd=head;
+        // even list link
+        ListNode even=head.next;
+        // even head list link
+        ListNode evenHead=head.next;
+        // odd tr always remain behind the even so even can be conditonal factor
+        while(even !=null && even.next!=null){
+            // joining the odd list 
+            odd.next=odd.next.next;
+            // joining the even list
+            even.next=even.next.next;
+            // move to next odd elem
+            odd=odd.next;
+            // move to next even elem
+            even=even.next;
+        }
+        // merge the odd list to even list 
+        odd.next=evenHead;
+        return head;
+    }
+}
+
+
+q9. detecting a loop in LL
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        ListNode slow=head;
+        ListNode fast=head;
+        while(fast!=null && fast.next!=null){
+            slow=slow.next;
+            fast=fast.next.next;
+            if(slow==fast){
+                return true;
+            }
+        }
+
+        return false;
+        
+    }
+}
+
+
+q10. merge two sorted list 
+class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        // h1 heads to the list1
+        ListNode h1 = list1;
+        // h2 heads to the list 2
+        ListNode h2 = list2;
+        // creating a dummy node
+        ListNode dummy = new ListNode(-1, null);
+        // temp points to dummy
+        ListNode temp = dummy;
+        // both should have left nodes
+        while (h1 != null && h2 != null) {
+            if (h1.val > h2.val) {
+                // connecting nodes
+                temp.next = h2;
+                temp = h2;
+                h2 = h2.next;
+
+            } else {
+                // h1<=h2
+                temp.next = h1;
+                temp = h1;
+                h1 = h1.next;
+            }
+        }
+        // left nodes for h1
+        if (h1 != null) {
+            temp.next = h1;
+        }
+        // left nodes for h2
+        if (h2 != null) {
+            temp.next = h2;
+        }
+
+        // return the head
+        return dummy.next;
+
+    }
+}
+
+
+q11. sort linked list 
+class Solution {
+    public ListNode sortList(ListNode head) {
+        // we will use merge sort for this question to get optimal solution and sorting linked list 
+        return mergeSort(head);
+        
+    }
+    
+    // return the head of the sorted linked list
+    public ListNode mergeSort(ListNode head){
+        // if head is null or or it is the single element end case 
+        if(head==null || head.next==null){
+            return head;
+        }
+        // finding the first mid of LL
+        ListNode midNode=midNode(head);
+        // head of left linked list
+        ListNode leftHead=head;
+        // head of right linked list 
+        ListNode rightHead=midNode.next;
+        midNode.next=null;
+        // sorting the left LL and getting its head 
+        ListNode leftList=mergeSort(leftHead);
+        // sorting the right LL and getting its head
+        ListNode rightList=mergeSort(rightHead);
+        
+        // return  the merge list from the left sorted LL and right sorted LL
+        return mergeList(leftList,rightList);
+    }
+    
+    // merge two sorted list 
+    public ListNode mergeList(ListNode l1,ListNode l2){
+        ListNode h1=l1;
+        ListNode h2=l2;
+        // creating a dummy node 
+        ListNode dummy=new ListNode(-1,null);
+        // temp points to dummy node 
+        ListNode temp=dummy;
+        // atleast both list must have some nodes
+        while(h1!=null && h2!=null){
+
+            if(h1.val > h2.val){
+                temp.next=h2;
+                temp=h2;
+                h2=h2.next;
+            }else{
+                // h1.val <= h2.val
+                temp.next=h1;
+                temp=h1;
+                h1=h1.next;
+            }
+        }
+        // h1 have some left nodes
+        if(h1!=null){
+            temp.next=h1;
+        }
+        // h2 have some left nodes 
+        if(h2!=null){
+            temp.next=h2;
+        }
+
+        //  return the head of merge sorted list 
+        return dummy.next;
+    }
+    // using the torto and hare algo 
+    public ListNode midNode(ListNode head){
+        // slow by 1 
+        // fast by 2 
+        ListNode slow=head;
+        // to get the first mid elem use head.next 
+        // otherwise for second use head only
+        ListNode fast=head.next;
+        while(fast!=null && fast.next!=null){
+            slow=slow.next;
+            fast=fast.next.next;
+        }
+        return slow;
+    }
+}

@@ -1,0 +1,588 @@
+q1. 
+class Solution {
+    static int countNodes(int i) {
+        // code here
+        return (int)Math.pow(2,i-1);
+    }
+}
+
+
+q2. 
+class Solution{
+    public static void createTree(Node root0, ArrayList<Integer> v ){
+        // Code here
+        Queue<Node> nodes=new LinkedList();
+        nodes.add(root0);
+        int index=1;
+        
+    
+        
+        while(!nodes.isEmpty() && index< v.size()){
+            Node current=nodes.poll();
+            current.left = new Node(v.get(index));
+            nodes.add(current.left);
+            index++;
+            if(index>=v.size()){
+                break;
+            }
+            current.right = new Node(v.get(index));
+            nodes.add(current.right);
+            index++;
+            
+            
+        }
+        
+        
+    }
+}
+
+q5.
+// preorder traversal root left right
+class Solution {
+    List<Integer> answer=new ArrayList<Integer>();
+    public List<Integer> preorderTraversal(TreeNode root) {
+        preOrder(root);
+        return answer;
+
+        
+    }
+
+
+    public void preOrder(TreeNode node){
+        // reach at a end
+        if(node==null){
+            return;
+        }
+        
+        // root left right
+        answer.add(node.val);
+
+        preOrder(node.left);
+        preOrder(node.right);
+    }
+}
+
+q6.
+// in order left root right
+class Solution {
+    List<Integer> answer = new ArrayList<>();
+
+    public List<Integer> inorderTraversal(TreeNode root) {
+        inOrder(root);
+
+        return answer;
+    }
+
+    public void inOrder(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        inOrder(node.left);
+        answer.add(node.val);
+        inOrder(node.right);
+
+    }
+}
+
+
+q7. 
+// post order left right data
+class Solution {
+    List<Integer> answer = new ArrayList<>();
+
+    public List<Integer> postorderTraversal(TreeNode root) {
+
+        postOrder(root);
+
+        return answer;
+
+    }
+
+    public void postOrder(TreeNode node) {
+        if (node == null) {
+            return;
+
+        }
+
+        postOrder(node.left);
+        postOrder(node.right);
+        answer.add(node.val);
+
+    }
+}
+
+
+q8.
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> answers = new ArrayList<List<Integer>>();
+        Queue<TreeNode> nodes = new LinkedList<>();
+        nodes.add(root);
+        if (root == null) {
+            return answers;
+        }
+
+        while (!nodes.isEmpty()) {
+            List<Integer> level = new ArrayList<Integer>();
+            int size = nodes.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode temp = nodes.poll();
+                if (temp.left != null) {
+                    nodes.add(temp.left);
+                }
+
+                if (temp.right != null) {
+                    nodes.add(temp.right);
+                }
+
+                level.add(temp.val);
+
+            }
+            answers.add(level);
+
+        }
+
+        return answers;
+    }
+}
+
+
+
+
+
+
+q14.
+class Solution {
+    // apply level order traversal and you get 
+    public int maxDepth(TreeNode root) {
+        List<List<Integer>> answers=new ArrayList<List<Integer>>();
+        Queue<TreeNode> que=new LinkedList<TreeNode>();
+        que.add(root);
+        if(root==null){
+            return 0;
+        }
+        while(!que.isEmpty()){
+            List<Integer> level=new ArrayList<Integer>();
+            int size=que.size();
+            for(int i=0;i<size;i++){
+                TreeNode temp=que.poll();
+                if(temp.left!=null){
+                    que.add(temp.left);
+                }
+
+                if(temp.right!=null){
+                    que.add(temp.right);
+                }
+
+                level.add(temp.val);
+            }
+
+            answers.add(level);
+
+        }
+
+
+        
+
+        return answers.size();
+    }
+}
+
+
+recursive approach : 
+class Solution {
+    public int maxDepth(TreeNode root) {
+        // basically at particular node height would be itself and maxHeight(left,right)
+        // so height would be 1 + maxHeight(left , right);
+        if(root==null){
+            return 0;
+        }
+
+
+        // calculate left subtree height
+        int left =maxDepth(root.left);
+
+        // calculate right subtree height
+        int right=maxDepth(root.right);
+
+        return 1 + Math.max(left,right);
+        
+    }
+}
+
+
+q15. 
+class Solution {
+
+    int check(TreeNode node) {
+        // we check at every node wehather it is balanced or not
+        // if balanced then return height of that node for its parent node
+        // if not balanced node then return the -1
+        if (node == null) {
+            return 0;
+        }
+
+        // check for the left subtree height
+        int leftHeight = check(node.left);
+
+        // check for the right subtree height
+        int rightHeight = check(node.right);
+
+        // check any left or right subtree is not balanced
+        if (leftHeight == -1 || rightHeight == -1) {
+            return -1;
+        }
+
+        // condition on that node weather balanced
+        if (Math.abs(leftHeight - rightHeight) > 1) {
+            return -1;
+        }
+
+        // return height
+        return 1 + Math.max(leftHeight, rightHeight);
+
+    }
+
+    public boolean isBalanced(TreeNode root) {
+        // if you get -1 then it is not a balanced tree
+
+        if (check(root) == -1) {
+            return false;
+        }
+
+        return true;
+
+    }
+}
+
+
+q16. 
+class Solution {
+
+    // storing the max length of diamter
+    int maxDim = 0;
+
+    // finding the height at node as well as max diameter possible
+    // same procedure like for finding height
+    int findMax(TreeNode node) {
+        // if node null return 0; base case
+        if (node == null) {
+            return 0;
+        }
+
+        // we calculate the left subtree height
+        int leftHeight = findMax(node.left);
+
+        // we caulcute the right subtree height
+        int rightHeight = findMax(node.right);
+
+        // we find the the diamter length
+        int len = leftHeight + rightHeight;
+        maxDim = Math.max(len, maxDim);
+
+        // heigt of that node would be this
+        return 1 + Math.max(leftHeight, rightHeight);
+
+    }
+
+    public int diameterOfBinaryTree(TreeNode root) {
+        findMax(root);
+        return maxDim;
+
+    }
+}
+
+
+q17.
+class Solution {
+
+    // storing the min value possible on var
+    int max = Integer.MIN_VALUE;
+
+    public int maxPathSum(TreeNode root) {
+        // max Path
+        maxPath(root);
+        return max;
+
+    }
+
+    // this fucntion computes the maxpath on that node and return the maxPath for
+    // its parent node
+    public int maxPath(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        // left max
+        // if we got negative number then two possible scene
+        // if node negative then negative plus negative more smaller number
+        // if node is positive then negative plus positive makes a smaller number than
+        // the individuaal path
+        int leftMax = Math.max(maxPath(root.left), 0);
+        // rigth max
+        int rightMax = Math.max(maxPath(root.right), 0);
+
+        // find current path psooible
+        int currentSum = root.val + leftMax + rightMax;
+
+        max = Math.max(currentSum, max);
+
+        // return the path for the parent
+        return root.val + Math.max(leftMax, rightMax);
+
+    }
+}
+
+
+q18.
+class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        return checkTree(p,q);
+    }
+
+    
+    // on that node of both tree check weather the left part of the tree is same then check for the right part of the tree and then the value of node of both tree
+    boolean checkTree(TreeNode p,TreeNode q){
+        // null check 
+        // if both null then true other wise false
+        if(p==null || q==null){
+            return p==q;
+        }
+        // check for the left tree 
+        boolean left=checkTree(p.left,q.left);
+        // check for the right tree
+        boolean right=checkTree(p.right,q.right);
+        // check for values 
+        if(left==true && right ==true){
+            if(p.val==q.val){
+                return true;
+            }
+        }
+        return false;
+    }
+
+}
+
+
+q19.
+class Solution {
+    List<List<Integer>> zigZag;
+
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        zigZag = new ArrayList<>();
+        levelOrder(root);
+
+        return zigZag;
+    }
+
+    // try to do level order traversal and at every odd index index reverse the List
+    // that you are going to add in answers
+    void levelOrder(TreeNode root) {
+        // root is null
+        if (root == null) {
+            return;
+        }
+        // index keep to track for even and odd index
+        int index = 0;
+        // que tree data structure
+        Queue<TreeNode> que = new LinkedList<TreeNode>();
+        que.add(root);
+        // run till que is not empty
+        while (!que.isEmpty()) {
+            // level by level lsit
+            List<Integer> level = new ArrayList<Integer>();
+            // we note the index so that we iterate only those node which are in sma level
+            int size = que.size();
+            // when first loop run then one loop run as size 1 so it add two nodes
+            // then for another level we will inital size 2 so noly two node traversed but
+            // it add four new nodes
+            for (int i = 0; i < size; i++) {
+                TreeNode temp = que.poll();
+                if (temp.left != null) {
+                    que.add(temp.left);
+                }
+
+                if (temp.right != null) {
+                    que.add(temp.right);
+                }
+
+                level.add(temp.val);
+            }
+
+            // check for odd index
+            if (index % 2 != 0) {
+                Collections.reverse(level);
+            }
+
+            // add in main answer
+            zigZag.add(level);
+            index++;
+        }
+    }
+}
+
+
+q20.
+public class Solution {
+
+
+    // function to check wheather this node is leaf node or not 
+    public static boolean isLeaf(TreeNode node){
+        if(node.left==null){
+            if(node.right == null){
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+
+    // start having left boundary traversal go node.left if it is null then go right
+    public static void leftBoundary(TreeNode node ,List<Integer> answer){
+        if(node==null){
+            return;
+        }
+        TreeNode current=node;
+        while(current!=null){
+            if(!isLeaf(current)){
+                answer.add(current.data);
+            }else{
+                return;
+            }
+            
+            if(current.left!=null){
+                current=current.left;
+            }else if(current.right!=null){
+                 current=current.right;
+            }
+        }
+    }
+
+    public static void nodeTraversal(TreeNode node ,List<Integer> answer){
+
+        if(node==null){
+            return ;
+        }
+        if(isLeaf(node)){
+            answer.add(node.data);
+        }
+
+        nodeTraversal(node.left, answer);
+        nodeTraversal(node.right, answer);
+
+
+    }
+
+    // start having right boundary traversal go node.right if it is null then go left
+    public static void rightTraversal(TreeNode node,List<Integer> answer){
+        if(node == null){
+            return ;
+        }
+
+        TreeNode current = node;
+        // we need to reverse this temp to get proper solution 
+        List<Integer> temp=new ArrayList<>();
+        while(current!=null){
+            if(!isLeaf(current)){
+                temp.add(current.data);
+            }else{
+
+                // revering the temp list 
+                Collections.reverse(temp);
+                for(int i=0;i<temp.size();i++){
+                    answer.add(temp.get(i));
+                }
+                return;
+            }
+
+            
+            if(current.right!=null){
+                current=current.right;
+
+            }else if(current.left!=null){
+                current=current.left;
+
+            }
+        }
+    }
+    public static List<Integer> traverseBoundary(TreeNode root){
+        // Write your code here.
+        List<Integer> answer=new ArrayList<Integer>();
+        if(isLeaf(root) == false){
+            answer.add(root.data);
+        }
+        leftBoundary(root.left,answer);
+        
+        nodeTraversal(root, answer);
+
+        rightTraversal(root.right, answer);
+
+        return answer;
+    }
+
+    
+}
+
+
+q24. 
+class Solution {
+    List<Integer> answer = new ArrayList<>();
+
+    public List<Integer> rightSideView(TreeNode root) {
+
+        reversePreorder(root, 0);
+
+        return answer;
+
+    }
+
+    // we are performing reverse preorder root right left
+    // logic we always comes to the rightest part of the every level
+    // so if the level equal to size of array then we are coming to the first time
+    // at that level
+    // so add that node data
+    public void reversePreorder(TreeNode root, int level) {
+        if (root == null) {
+            return;
+        }
+
+        // reaching first time at that level
+        if (level == answer.size()) {
+            answer.add(root.val);
+        }
+        // right part
+        reversePreorder(root.right, level + 1);
+        // left part
+        reversePreorder(root.left, level + 1);
+    }
+
+}
+
+
+
+q25.
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+
+        return symmetricCheck(root.left,root.right);
+    }
+
+    // in mirror image we take two nodes
+    // node.values hould be equal
+    // left.left should be same right.right 
+    // left.right should be same as right.left
+    public boolean symmetricCheck(TreeNode left,TreeNode right){
+        // if any node get null
+        if(left==null || right ==null){
+            return left==right;
+        }
+        // if checking nodes value
+        if(left.val != right.val){
+            return false;
+        }
+        // symmetricCheck(left.left,right.right)
+        // symmetricCheck(left.right,right.left)
+        return symmetricCheck(left.left,right.right) && symmetricCheck(left.right,right.left);
+    }
+}
