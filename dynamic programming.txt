@@ -1127,3 +1127,275 @@ class Solution {
         return dp[indx1][indx2]=Math.min(insert,Math.min(delete,replace));
     }
 }
+
+
+q22. max profit on stock sell and buy 2
+class Solution {
+    // use memoization to store the maxprofit we can get dp[currentDay][canBuy] from the currentDay to the zero days left 
+    int dp[][];
+    public int maxProfit(int[] prices) {
+        // memoization
+        int totalDay=prices.length;
+        dp=new int[totalDay][2];
+        for(int i=0;i<totalDay;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        // at day 0 you can buy the stock 
+        // canBuy = 1 yes you can buy
+        // canBuy = 0 no you cant buy 
+        return maximaProfit(prices,totalDay,0,1);
+        
+    }
+    
+    // this fucntion return the max profit can be attained on the condition of canBuy from the current day to the zero day left
+    // for sign remember profit = sell - buy ;
+    public int maximaProfit(int [] prices,int totalDay,int currentDay,int canBuy){
+        // means all days are gone last day also gone 
+        // you cant buy stock on that day 
+        // you cant sell stock if you have buy the stock
+        // hence profit gets zero
+        if(currentDay==totalDay){
+            return 0;
+        }
+        // memoization
+        if(dp[currentDay][canBuy]!=-1){
+            return dp[currentDay][canBuy];
+        }
+        int profit=0;
+        // eligible for buying
+        if(canBuy==1){
+            // you buyed stock on this day
+            int buy=-prices[currentDay] + maximaProfit(prices,totalDay,currentDay+1,0);
+            // you dont buyed stock on this day
+            int notBuy=0+maximaProfit(prices,totalDay,currentDay+1,1);
+            profit=Math.max(buy,notBuy);
+        }else{
+            // means you have buyed stock before 
+            // sell the stock on this day
+            int sell= prices[currentDay] + maximaProfit(prices,totalDay,currentDay+1,1);
+            // dont sell the stock on this day
+            int notSell=0+maximaProfit(prices,totalDay,currentDay+1,0);
+            profit=Math.max(sell,notSell);
+
+        }
+
+        // return max profit
+        return dp[currentDay][canBuy] = profit;
+    }
+}
+
+
+q23. best time to sell and buy stock 3 atmost two transactions
+class Solution {
+    // dp stores the max profit from current day to the zero day left under the condts of canBuy and transleft
+    int dp[][][];
+    public int maxProfit(int[] prices) {
+        // memoization
+        int totalDay=prices.length;
+        dp=new int[totalDay][2][3];
+        for(int i=0;i<totalDay;i++){
+            for(int j=0;j<2;j++){
+                Arrays.fill(dp[i][j],-1);
+            }
+        }
+        // on day zero we can buy the stock and total transcations left would be 2
+        
+        return maximalProfit(prices,totalDay,0,1,2);
+        
+    }
+    // return the max profit can be achieved from currentDay to the zero day left under condtions canBuy and transleft
+    public int maximalProfit(int [] prices,int totalDay,int currentDay,int canBuy,int transLeft){
+        // if no transcations can be performed hence we can buy more stocks 
+        // no day left so you can either buy stock or sell the buyed stock
+        if(transLeft ==0 || currentDay == totalDay){
+            return 0;
+        }
+        // memoization
+        if(dp[currentDay][canBuy][transLeft]!=-1)
+        {
+            return dp[currentDay][canBuy][transLeft];
+        }
+
+        int profit=0;
+        if(canBuy==1){
+            // eligible for buying
+            // buy the stock
+            int buy=-prices[currentDay] + maximalProfit(prices,totalDay,currentDay+1,0,transLeft);
+            // not buy the stock
+            int nbuy=0+maximalProfit(prices,totalDay,currentDay+1,1,transLeft);
+            profit=Math.max(buy,nbuy);
+        }else{
+            // sell the stock 
+            // you can sell the stock then only transcation complted 
+            // stock sold
+            int sell = prices[currentDay] + maximalProfit(prices,totalDay,currentDay+1,1,transLeft-1);
+            // not sold the stock
+            int nsell = 0 + maximalProfit(prices,totalDay,currentDay+1,0,transLeft);
+            profit=Math.max(sell,nsell);
+        }
+        
+        // return max profit
+        return dp[currentDay][canBuy][transLeft] =  profit;
+    }
+}
+
+
+q24. best time to buy and sell stock 4 with atmost trans k
+class Solution {
+    // stores the max profit can be acheived from the currentDay to the zero day left under conitions canBuy and transLeft
+    int dp[][][];
+    public int maxProfit(int k, int[] prices) {
+        int totalDay=prices.length;
+        dp=new int[totalDay][2][k+1];
+        for(int i=0;i<totalDay;i++){
+            for(int j=0;j<2;j++){
+                Arrays.fill(dp[i][j],-1);
+            }
+        }
+        // on day-0 you can buy and transLeft would be equal to k
+        return maximalProfit(prices,totalDay,0,1,k);
+        
+    }
+    // returns  the max profit can be acheived from the currentDay to the zero day left under conitions canBuy and transLeft
+    public int maximalProfit(int [] prices,int totalDay,int currentDay,int canBuy,int transLeft){
+        // max trans capability have achived so you cant niether buy or sell
+        // if zero day left then you cant perform either buy or sell
+        if(transLeft==0 || currentDay==totalDay){
+            return 0;
+        }
+        // memoization
+        if(dp[currentDay][canBuy][transLeft]!=-1){
+            return dp[currentDay][canBuy][transLeft];
+        }
+        
+        int profit=0;
+
+        if(canBuy==1){
+            // eligible for buying
+            // buyed
+            int buy=-prices[currentDay] + maximalProfit(prices,totalDay,currentDay+1,0,transLeft);
+            // not buyed
+            int nbuy=0+maximalProfit(prices,totalDay,currentDay+1,1,transLeft);
+            profit=Math.max(buy,nbuy);
+
+        }else{
+            // not eligible for buying
+            // sold
+            int sell=prices[currentDay] + maximalProfit(prices,totalDay,currentDay+1,1,transLeft-1);
+            // not sold
+            int nsell=0+maximalProfit(prices,totalDay,currentDay+1,0,transLeft);
+            profit=Math.max(sell,nsell);
+        }
+
+        // returns the max profit
+        return dp[currentDay][canBuy][transLeft] = profit;
+    }
+}
+
+
+
+q25. best time to buy and sold stock with cooldown
+class Solution {
+    // same concept as best time to buy and sell stock
+    // just different with cooldown
+    // stores the max profit possible from currentDay to the zero day left under
+    // conditons canBuy
+    int dp[][];
+
+    public int maxProfit(int[] prices) {
+        int totalDay = prices.length;
+        dp = new int[totalDay][2];
+        for (int i = 0; i < totalDay; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        return maximalProfit(prices, totalDay, 0, 1);
+    }
+
+    // returns the max profit possible from currentDay to the zero day left under
+    // conditons canBuy
+    public int maximalProfit(int prices[], int totalDay, int currentDay, int canBuy) {
+        // possible you sold the stock on the last day
+        if (currentDay >= totalDay) {
+            return 0;
+        }
+        // memoization
+        if (dp[currentDay][canBuy] != -1) {
+            return dp[currentDay][canBuy];
+        }
+
+        int profit = 0;
+
+        // eligible for buying
+        if (canBuy == 1) {
+            // buy
+            int buy = -prices[currentDay] + maximalProfit(prices, totalDay, currentDay + 1, 0);
+            // not buy
+            int nbuy = 0 + maximalProfit(prices, totalDay, currentDay + 1, 1);
+            profit = Math.max(buy, nbuy);
+
+        } else {
+            // selling on currentDay hence you cant buy on currentDay+1 so move to
+            // currentDay+2
+            // sold
+            int sell = prices[currentDay] + maximalProfit(prices, totalDay, currentDay + 2, 1);
+            // not sold
+            int nsell = 0 + maximalProfit(prices, totalDay, currentDay + 1, 0);
+            profit = Math.max(sell, nsell);
+        }
+        // returns the max profit
+        return dp[currentDay][canBuy] = profit;
+    }
+}
+
+
+q26. best time  to buy and sold the stock with transcation fee
+class Solution {
+    // stores the max profit from the currentday to zero day left after deduction
+    // fee under the condiions canBuy
+    int dp[][];
+
+    public int maxProfit(int[] prices, int fee) {
+        int totalDay = prices.length;
+        dp = new int[totalDay][2];
+        for (int i = 0; i < totalDay; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        return maximalProfit(prices, totalDay, fee, 0, 1);
+
+    }
+
+    // returns the max profit from the currentday to zero day left after deduction
+    // fee under the condiions canBuy
+    public int maximalProfit(int[] prices, int totalDay, int fee, int currentDay, int canBuy) {
+        // no day left you cant sell or buy
+        if (currentDay == totalDay) {
+            return 0;
+        }
+        // memoiuzation
+        if (dp[currentDay][canBuy] != -1) {
+            return dp[currentDay][canBuy];
+        }
+
+        int profit = 0;
+        // eligible for buying
+        // fess will be deducted on the time of sell stock
+        if (canBuy == 1) {
+            // buyed
+            int buy = -prices[currentDay] + maximalProfit(prices, totalDay, fee, currentDay + 1, 0);
+            // not buy
+            int nbuy = 0 + maximalProfit(prices, totalDay, fee, currentDay + 1, 1);
+            profit = Math.max(buy, nbuy);
+        } else {
+            // sold
+            // fees deducted
+            int sell = -fee + prices[currentDay] + maximalProfit(prices, totalDay, fee, currentDay + 1, 1);
+            // not sold
+            int nsell = maximalProfit(prices, totalDay, fee, currentDay + 1, 0);
+            profit = Math.max(sell, nsell);
+        }
+        // return max profit
+        return dp[currentDay][canBuy] = profit;
+    }
+}
