@@ -1399,3 +1399,600 @@ class Solution {
         return dp[currentDay][canBuy] = profit;
     }
 }
+
+
+
+
+q27. count the number of subset that make the sum equal to the target
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+    // memoization to store the value of func(index,num,targ) which return the number of way to make targ from zero till(including) index
+    public static int[][] dp;
+    public static int findWays(int num[], int tar) {
+        // Write your code here.
+        dp=new int[num.length][tar+1];
+        for(int i=0;i<num.length;i++){
+            Arrays.fill(dp[i],-1);
+        }
+
+        return findWay(num.length-1,num,tar);
+    }
+    
+    //func(index,num,targ) which return the number of way to make targ from zero till(including) index
+    public static int findWay(int index,int num[],int targ){
+        // target is zero
+        if(targ==0){
+            // coutning number of zero from current to zero
+            // case included no zero selected 
+            double way=0;
+            for(int i=index;i>=0;i--){
+                if(num[index]==0){
+                    way++;
+
+                }
+            }
+            way=Math.pow(2, way);
+            return (int)(way);
+        }
+        // array end reached
+        if(index==0){
+            if(num[0]==targ){
+                return 1;
+            }
+            return 0;
+        }
+        
+        // memoization
+        if(dp[index][targ]!=-1){
+            return dp[index][targ];
+        }
+        // current index not picked
+        int notPick=findWay(index-1, num, targ);
+        // current index picked
+        int pick=0;
+        // check weather current index element is not greater than target
+        if(num[index]<=targ){
+            pick=findWay(index-1, num, targ-num[index]);
+        }
+        dp[index][targ]=pick+notPick;
+        return dp[index][targ];
+    }
+}
+
+
+q28.Longest increasing subsequence 
+class Solution {
+    // stores the value of funct(current,prev) which return the length of incresing subsequence from current to end under condition last element picked was previous 
+    int dp[][];
+    public int lengthOfLIS(int[] nums) {
+        int len=nums.length;
+        // as intitiall prev_index selected would be -1 so we will stores the value of func(curr,prev) in dp[curr][prev+1]
+        dp=new int[len][len+1];
+        for(int i=0;i<len;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        
+        // return the max increasing sequence undder the condition no index selected and current index is zero
+        return maxLength(nums,0,-1);
+        
+        
+    }
+    // funct(current,prev) which return the length of incresing subsequence from current to end under condition last element picked was previous 
+    public int  maxLength(int []nums,int current_index,int prev_index){
+        // out of elements
+        if(current_index==nums.length){
+            return 0;
+        } 
+        // memoization
+        if(dp[current_index][prev_index+1]!=-1){
+            return dp[current_index][prev_index+1];
+        }
+        // current index not picked
+        int nonPick = 0+maxLength(nums,current_index+1,prev_index);
+        int pick=0;
+        // checking wheather the current index can be picked 
+        if(prev_index==-1 || nums[current_index] > nums[prev_index]){
+            pick=1+maxLength(nums,current_index+1,current_index);
+        }
+        // return the max of(possible solution)
+        return dp[current_index][prev_index+1] = Math.max(pick,nonPick);
+    }
+}
+
+
+q29. printing longest subsequence 
+class Solution {
+    public ArrayList<Integer> longestIncreasingSubsequence(int n, int arr[]) {
+        // Code here
+        // hash[index] gives the index of the last element of the sequence 
+        int hash[]=new int[n];
+        // stores the longest sequence possible from index zero to current idex
+        int dp[]=new int[n];
+        // fill with 1 as element makes it self a sequence 
+        Arrays.fill(dp,1);
+        // length of longest subsequence 
+        int max=1;
+        // last element index of longest sequence 
+        int last_index=0;
+        for(int current=0;current<n;current++){
+            // element it self a sequnce 
+            hash[current]=current;
+            // check from the prevous index to form longest sequnce 
+            for(int prev=0;prev<current;prev++){
+                // we got the longest sequnce than prev seq hence need to change dp[current]
+                if(arr[current] > arr[prev] && dp[current] < dp[prev] + 1){
+                    dp[current]=dp[prev] + 1;
+                    // change is due to the arr[prev]
+                    hash[current] = prev;
+                }
+                
+            }
+            // update in longest sequnce 
+            if(dp[current] > max){
+                max=dp[current];
+                last_index=current;
+            }
+        }
+        
+        // back track 
+        ArrayList<Integer> answer=new ArrayList<Integer>();
+        answer.add(arr[last_index]);
+        
+        while(hash[last_index] != last_index){
+            last_index=hash[last_index];
+            answer.add(arr[last_index]);
+        }
+        Collections.reverse(answer);
+        return answer;
+        
+    }
+}
+
+
+q30.Longest divisble subsequence 
+class Solution {
+    public List<Integer> largestDivisibleSubset(int[] nums) {
+        // sorting nunber to assure that the if current element is divisble by the the last element of possible subsequence then all pairs are divsisble 
+        Arrays.sort(nums);
+        int len=nums.length;
+        // stores the lenghth of largest subsequence from 0 to till that index
+        int dp[]=new int[len];
+        // assuming that the possible slution can be the element it self 
+        Arrays.fill(dp,1);
+        // to keep the backtrack as hash[index] stores the element of the last possible subsequence 
+        int hash[]=new int[len];
+        // case for the only one element in sequence 
+        int maxLen=1;
+        int last_index=0;
+        
+        // judiing for the current index
+        for(int current=0;current < len;current++){
+            // pointing to itself only 
+            hash[current]=current;
+            // checking out all possible subsequence before the current index 
+            // as nums[prev] will act the last element of the subsequence so ut divides then all pair would be divisible 
+            for(int prev=0;prev<current;prev++){
+                // condition check 
+            
+                if(nums[current]%nums[prev] ==0 && dp[current] < dp[prev]+1){
+                    // need to stores the prev index in hash as to print our all squance 
+                    dp[current]=dp[prev]+1;
+                    hash[current]= prev;
+                }
+
+            }
+            // max length os subset changes hence last index 0f the index also get altered 
+            if(maxLen < dp[current]){
+                maxLen=dp[current];
+                last_index=current;
+            }
+        }
+
+        // backtraking through hash 
+        // last_index return the index of the last element of the subsequence 
+        // hash[last_index] gives the last index of the subset which part of final answer
+        // hash[index]
+        List<Integer> ans=new ArrayList<Integer>();
+        ans.add(nums[last_index]);
+        // just watch video 
+        while(hash[last_index]!=last_index){
+            last_index=hash[last_index];
+            ans.add(nums[last_index]);
+        }
+
+        return ans;
+
+        
+    }
+}
+
+q31. Longest String chain
+class Solution {
+
+    // check the weather this both string can make a chain or not
+    public boolean checkString(String a, String b) {
+        // a.length > b.length
+        // their length differnce should be 1
+        if (a.length() != b.length() + 1) {
+            return false;
+        }
+
+        int first = 0;
+        int second = 0;
+
+        while (first < a.length()) {
+            // character matches
+            if (second < b.length() && a.charAt(first) == b.charAt(second)) {
+                first++;
+                second++;
+
+            } else {
+                // character dont match
+                first++;
+            }
+        }
+        // visualize through notes
+        if (first == a.length() && second == b.length()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public int longestStrChain(String[] words) {
+        // rememebr we need subset so no need to order to maintain
+        // sorting the words basaed on the ther length
+        Comparator<String> compAlph = new Comparator<String>() {
+            public int compare(String a, String b) {
+                return a.length() - b.length();
+            }
+        };
+
+        Arrays.sort(words, compAlph);
+        System.out.println(words[0]);
+        // dp stores the max length of subsequence till that index
+        int[] dp = new int[words.length];
+        Arrays.fill(dp, 1);
+        int maxLen = 1;
+
+        for (int current = 0; current < words.length; current++) {
+            // try out all the possible combination for the current element 
+            for (int prev = 0; prev < current; prev++) {
+                // prev deontes the last index of max  subsequence  till prev if last element of subsequence can
+                // make string chain than whole sequnce can make
+                if (checkString(words[current], words[prev]) && dp[current] < dp[prev] + 1) {
+                    // dp[current] value changes
+                    dp[current] = dp[prev] + 1;
+                }
+            }
+            maxLen = Math.max(maxLen, dp[current]);
+        }
+
+        return maxLen;
+
+    }
+}
+
+
+q32.Number of longest subsequnce 
+class Solution {
+    public int findNumberOfLIS(int[] nums) {
+        int len = nums.length;
+        // dp[i] store the maxlen of subsequence till index index i
+        int[] dp = new int[len];
+        // count[i] the number of possible subsequnce of len dp[i]
+        int[] count = new int[len];
+        // 1 dignify the sequence of element it self
+        Arrays.fill(dp, 1);
+        Arrays.fill(count, 1);
+        // max length of possible subsequence
+        int maxLen = 1;
+
+        // till this index = current checking the possible sequnces
+        for (int curr = 0; curr < len; curr++) {
+            // try out weather this element can be part of the previous sequnces
+            for (int prev = 0; prev < curr; prev++) {
+                // current element can part of the sequence of prev
+                if (nums[prev] < nums[curr]) {
+                    // if same length sequnce found add alll the possible way to make sequnce prev
+                    if (dp[curr] == dp[prev] + 1) {
+                        count[curr] += count[prev];
+                        // if we got new max len for current then all possible way to make sequnce till
+                        // current would be same as to make sequnce till prev
+                    } else if (dp[curr] < dp[prev] + 1) {
+                        dp[curr] = dp[prev] + 1;
+                        count[curr] = count[prev];
+                    }
+                }
+            }
+            // max length
+            maxLen = Math.max(maxLen, dp[curr]);
+        }
+        // finding out the number of sequnce of length = maxLength
+        int finalAnswer = 0;
+
+        for (int i = 0; i < len; i++) {
+            if (dp[i] == maxLen) {
+                finalAnswer += count[i];
+            }
+        }
+        ;
+
+        return finalAnswer;
+
+    }
+}
+
+
+q33. assign cookies
+class Solution {
+    public int findContentChildren(int[] g, int[] s) {
+        // g refers to the children greed array
+        // s refers to the cookie_size array
+        // allot min cookie first  to those whose greed is less 
+        Arrays.sort(g);
+        Arrays.sort(s);
+        // denotes the which cookie is getting allloted
+        int cookie_num=0;
+        // denotes which children greed is getting satisfied
+        int child_num=0;
+
+        while(cookie_num < s.length && child_num < g.length){
+            // you can only satisfy the children greed when greed<=cookie_size
+            if(g[child_num] <= s[cookie_num]){
+                // child satisfied
+                child_num++;
+            }
+            // no matter if cookie is alloted then you cant allot to other 
+            // if cookie is not alloted because of unsatisfaction then it cant be alloted to anyone greed is in sorted manner
+            cookie_num++;
+        }
+
+        /// try to have dry run 
+        return child_num;
+        
+    }
+}
+
+
+
+
+q34.Coin change 
+class Solution {
+    // memoization stores the value of minCoins(index,coins,target) which returns
+    // the minCoins to achieve that target till index
+    int dp[][];
+
+    public int coinChange(int[] coins, int amount) {
+        int len = coins.length;
+        // memoization
+        dp = new int[len][amount + 1];
+
+        for (int i = 0; i < len; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+        // returning the minCoins to achieve amount till len-1 index
+        int answer = minCoins(len - 1, coins, amount);
+        // handling out the non possible scene
+        return answer >= 1e9 ? -1 : answer;
+
+    }
+    // minCoins(index,coins,target) which returns
+    // the minCoins to achieve that target till index
+    public int minCoins(int index, int[] coins, int target) {
+        // target is zero hence coin addition is there
+        if (target == 0) {
+            return 0;
+        }
+        // reached at the last coin
+        if (index == 0) {
+            // checking wheather whoule target can be achieved through the last coin or not
+            if (target % coins[index] == 0) {
+                // give the number of coins (last) used to make that target
+                return target / coins[index];
+            }
+            // solution dont exhist
+            return (int) 1e9;
+        }
+        // memoization
+        if (dp[index][target] != -1) {
+            return dp[index][target];
+        }
+        // current index coins not picked
+        int notPick = 0 + minCoins(index - 1, coins, target);
+        int pick = Integer.MAX_VALUE;
+        // check weather the current coin can be picked id coins[index] > target then we
+        // will exceed target
+        if (coins[index] <= target) {
+            // coin picked but we can again pick that particualr coin
+            pick = 1 + minCoins(index, coins, target - coins[index]);
+        }
+        // return ths min coins solution
+        return dp[index][target] = Math.min(notPick, pick);
+    }
+}
+
+
+
+q35. number of subset with the differnece d 
+import java.util.* ;
+import java.io.*; 
+
+public class Solution {
+    public static int[][] dp;
+	// ensures that number does not overflow
+    public static int mod =(int)1e9 + 7;
+
+    
+	// this function return the number of subset possible till index under condiotion target
+    public static int countNumber(int[] arr, int index, int target) {
+        if (target == 0) {
+            // Counting the number of zeros from the current index down to 0
+            int numberOfZero = 0;
+            for (int i = index; i >= 0; i--) {
+                if (arr[i] == 0) {
+                    numberOfZero++;
+                }
+            }
+			// adding all possible out solutions
+            return (int)Math.pow(2, numberOfZero);  // 2^numberOfZero
+        }
+        
+		// reached at the last index 
+        if (index == 0) {
+            if (arr[index] == target) {
+                return 1;
+            }
+            return 0;
+        }
+        // memoization
+        if (dp[index][target] != -1) {
+            return dp[index][target];
+        }
+        
+		// non pick
+        int nonPick = countNumber(arr, index - 1, target);
+        int pick = 0;
+        if (arr[index] <= target) {
+			// pick
+            pick = countNumber(arr, index - 1, target - arr[index]);
+        }
+        
+        return dp[index][target] = (nonPick + pick) % mod;
+    }
+
+    public static int countPartitions(int n, int d, int[] arr) {
+        int totalSum = 0;
+        for (int i = 0; i < n; i++) {
+            totalSum += arr[i];
+        }
+
+        // If totalSum - d is negative or not divisible by 2, partition is impossible look at formula 
+        if (totalSum - d < 0 || (totalSum - d) % 2 != 0) {
+            return 0;
+        }
+
+        int target = (totalSum - d) / 2;
+        dp = new int[n][target + 1];
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        return countNumber(arr, n - 1, target);
+    }
+}
+
+
+q36.Target sum
+class Solution {
+    // exactly the same concept applied to the dp - 18 problem
+    // stores dp[index][target] the number of subset that can form target till index
+    public int dp[][];
+
+    // the number of subset that can form target till index
+    public int countSubset(int[] nums, int index, int target) {
+        // coutning number of of zero from current index
+        if (target == 0) {
+            int numZero = 0;
+
+            for (int i = index; i >= 0; i--) {
+                if (nums[i] == 0) {
+                    numZero++;
+                }
+            }
+            int possibleSoln = (int) Math.pow(2, numZero);
+            return possibleSoln;
+        }
+        // reached at last index
+        if (index == 0) {
+            if (nums[index] == target) {
+                return 1;
+            }
+            return 0;
+        }
+        // memoization
+        if (dp[index][target] != -1) {
+            return dp[index][target];
+        }
+        // not picked
+        int nonPick = countSubset(nums, index - 1, target);
+        // picked
+        int pick = 0;
+        if (nums[index] <= target) {
+            pick = countSubset(nums, index - 1, target - nums[index]);
+        }
+        return dp[index][target] = pick + nonPick;
+    }
+
+    public int findTargetSumWays(int[] nums, int target) {
+        // same concept applied in dp -18 problem
+        int totalSum = 0;
+        int len = nums.length;
+        for (int i = 0; i < len; i++) {
+            totalSum += nums[i];
+        }
+        int sum = totalSum - target;
+        if (sum < 0 || (sum % 2) != 0) {
+            return 0;
+        }
+
+        dp = new int[len][(sum / 2) + 1];
+        for (int i = 0; i < len; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+
+        return countSubset(nums, len - 1, sum / 2);
+
+    }
+}
+
+
+q37. number of possible ways to make the amount Coin change - II
+class Solution {
+    // stores the value of funct(index,target) which returns number of way to achieve target amount till index 
+    public int dp[][];
+
+    // funct(index,target) which returns number of way to achieve target amount till index
+    public int  uniqueWay(int coins[],int index,int target){
+        // amount achieved 
+        if(target==0){
+            // hence return 1 signify one way signify 
+            return 1;
+        }
+        
+        // reached at the last index as only the possibe solution 
+        if(index==0){
+            // paying all the amount by this last coins value 
+            return target%coins[index]==0 ? 1 : 0;
+        }
+        
+        // memoization
+        if(dp[index][target] !=-1){
+            return dp[index][target];
+        }
+        // current coin not be picked
+        int notPick=uniqueWay(coins,index-1,target);
+        
+        int pick=0;
+        // cehckin weather the current coin dont exceed the target
+        if(coins[index]<=target){
+            // picked the current coin but not altering index as it can be picked once again
+            pick=uniqueWay(coins,index,target-coins[index]);
+        }
+        // sum of all possible solution
+        return dp[index][target]=notPick+pick;
+    }
+    public int change(int amount, int[] coins) {
+        // memoization
+        int len=coins.length;
+        dp=new int[len][amount+1];
+        for(int i=0;i<len;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        // returns the number of way to complete the amount till index len-1 
+        return uniqueWay(coins,len-1,amount);
+        
+    }
+}

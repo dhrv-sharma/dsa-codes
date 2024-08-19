@@ -397,3 +397,454 @@ class Solution {
         return slow;
     }
 }
+
+
+q12. reversing the linked list in k groups
+class Solution {
+    // reverse the Linked List
+    public ListNode reverse(ListNode head) {
+        ListNode temp = head;
+        ListNode prev = null;
+        ListNode front = null;
+        while (temp != null) {
+            front = temp.next;
+            temp.next = prev;
+            prev = temp;
+            temp = front;
+        }
+
+        return prev;
+
+    }
+
+    // finding the k the element of linked list
+    public ListNode findkNode(ListNode head, int k) {
+        ListNode temp = head;
+        int count = 0;
+        while (temp != null) {
+            count++;
+            if (count == k) {
+                break;
+            }
+            temp = temp.next;
+        }
+
+        return temp;
+
+    }
+
+    public ListNode reverseKGroup(ListNode head, int k) {
+        // it heads to the forst element of the group
+        ListNode temp = head;
+        // points to the last element of last reversed group
+        ListNode prevTemp = null;
+        // points to the first element of next group that going to be reversed
+        ListNode nextTemp = null;
+
+        while (temp != null) {
+            // first find the k the element
+            // it heads to the last element of the group
+            ListNode kNode = findkNode(temp, k);
+            // k th element is null
+            // then group is not possible to reverse
+            if (kNode == null) {
+                // in case if the main list length is greater than k then surely we have last
+                // unlinked reversed group
+                if (prevTemp != null) {
+                    prevTemp.next = temp;
+                }
+                break;
+            }
+            // stroing the node of Knode for temp jump
+            nextTemp = kNode.next;
+            // linked broken so group can act as seprated linked list
+            kNode.next = null;
+
+            // reversing the list
+            reverse(temp);
+
+            // if we have reversed the first group we nned to change the head of main linked
+            // list
+            if (temp == head) {
+                head = kNode;
+            } else {
+                // joing the last reversed group to the new reversed group
+                prevTemp.next = kNode;
+            }
+
+            // storing the last element of the current group
+            prevTemp = temp;
+            // move to head of next group
+            temp = nextTemp;
+
+        }
+
+        return head;
+    }
+
+}
+
+
+
+q13.  rotate linked list 
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        // first we found the length of LL and reach at the the plast points to last
+        // last node 
+        ListNode last = head;
+        int len = 0;
+
+        while (last != null) {
+            len++;
+            if (last.next == null) {
+                break;
+            }
+            last = last.next;
+        }
+
+        // if len 0 return null
+        if (len == 0) {
+            return head;
+        }
+
+        // basically after len rotation u get the same LL so k%len would be thenumber of
+        // rotation
+        // from observation len - k%len used to find the last element of the rotated
+        // Linked list
+        int round = len - k % len;
+
+        // temp points to the last element of rotated list
+        ListNode temp = head;
+        while (temp != null) {
+            round--;
+            if (round == 0) {
+                break;
+            }
+            temp = temp.next;
+        }
+        // make the last element of current ll to the head of current ll
+        last.next = head;
+        // head of rotated ll
+        head = temp.next;
+        // breka the link
+        temp.next = null;
+
+        return head;
+
+    }
+}
+
+q14. detect head of a loop
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+
+            if (slow == fast) {
+                slow = head;
+                while (slow != fast) {
+                    slow = slow.next;
+                    fast = fast.next;
+                }
+                return slow;
+            }
+
+        }
+
+        return null;
+
+    }
+}
+
+
+q15. pallindrome check
+class Solution {
+
+    // reversing the linked list
+    public ListNode reverse(ListNode head) {
+        ListNode temp = head;
+        ListNode prev = null;
+        ListNode front;
+        while (temp != null) {
+            front = temp.next;
+            temp.next = prev;
+            prev = temp;
+            temp = front;
+        }
+
+        return prev;
+    }
+
+    public boolean isPalindrome(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+
+        // middle element of Linked List
+        // for even we need to return m1 so we reach at second last element
+        // (fast.next.next)
+        // for odd reach at the last element (fast.next)
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        ListNode newHead = reverse(slow.next);
+        // head of first array
+        ListNode first = head;
+        // head of second array
+        ListNode second = newHead;
+
+        // compare rem always second will reach at null
+        while (second != null) {
+            if (first.val != second.val) {
+                // return to prev conditions
+                reverse(newHead);
+                return false;
+            }
+            first = first.next;
+            second = second.next;
+        }
+
+        // return to prev condtions
+        reverse(newHead);
+        return true;
+    }
+}
+
+
+
+q16. deleting n th node from end 
+approach 1:
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        // coutning the length of linked list
+        int count = 0;
+        ListNode temp = head;
+        while (temp != null) {
+            count++;
+            temp = temp.next;
+        }
+        // if n == length that menas we need to delete head node
+        if (n == count) {
+            head = head.next;
+            return head;
+        }
+        // finding the one before node before the deletingNode
+        int res = count - n;
+        temp = head;
+        while (temp != null) {
+            res--;
+            // found the pred of deleting node
+            if (res == 0) {
+                break;
+            }
+            temp = temp.next;
+        }
+        // node links changes
+        temp.next = temp.next.next;
+        return head;
+
+    }
+}
+
+
+approach 2:
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        // fast and slow two ptr pointing to same node
+        ListNode fast = head;
+        ListNode slow = head;
+        int count = n;
+        // make the fast ptr to n moves sp that we can get move slow n th node from last
+        // node
+        for (int i = 0; i < count; i++) {
+            fast = fast.next;
+        }
+        // fast null means n equal to length of list hence want to delete head node
+        if (fast == null) {
+            return slow.next;
+        }
+        // move the fast node and slow node by 1 simultaneoulsy by 1 until fast reach at
+        // the last node
+        while (fast.next != null) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        // altering the links of nodes
+        slow.next = slow.next.next;
+        return head;
+
+    }
+}
+
+
+q17. deleting the middle node 
+class Solution {
+    public ListNode deleteMiddle(ListNode head) {
+        // we follow the torto and hare algo
+        ListNode fast=head;
+        ListNode slow=head;
+        // head will the the middle element [LL length of 0 and 1]
+        if(head==null || head.next==null){
+            return null;
+        }
+        // make the fast move his move as per torto hare move keeping slow not movable for only one move
+        fast=fast.next.next;
+        // normal torto and hare algo
+        // slow points to node before the middle node 
+        // for even slow points to m1 
+        // for odd length fast points to the last node of LL
+        // for even length fast points to the null of LL
+        while(fast!=null && fast.next!=null ){
+            slow=slow.next;
+            fast=fast.next.next;
+        }
+        // changing the linking of linked list 
+        slow.next=slow.next.next;
+        return head;
+        
+    }
+}
+
+
+q18. add two numbers in two linked list 
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        // head1 head of linked list
+        ListNode head1=l1;
+        // head2 head of liked list
+        ListNode head2=l2;
+        // dummy node
+        ListNode dummyNode=new ListNode(-1);
+        // current node
+        ListNode currNode=dummyNode;
+        // carry 
+        int carry=0;
+        // traversal untill both the list are traversed
+        while(head1!=null || head2!=null){
+            // adding carry into sum
+            int sum=carry;
+            if(head1!=null){
+                // add head1 value
+                sum+=head1.val;
+                head1=head1.next;
+            }
+            if(head2!=null){
+                // add head2 value
+                sum+=head2.val;
+                head2=head2.next;
+            }
+            
+            // new node
+            ListNode newNode=new ListNode(sum%10);
+            carry=sum/10;
+            currNode.next=newNode;
+            currNode=currNode.next;
+        }
+        // check for any carry exhist 
+        if(carry!=0){
+            ListNode newNode=new ListNode(carry);
+            currNode.next=newNode;
+            currNode=currNode.next;
+        }
+
+        // head node of answer node
+        return dummyNode.next;
+    }
+}
+
+
+q19. find intersection
+
+Approach 1 : 
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        // if any list is empty they never intersect 
+        if(headA==null || headB==null){
+            return null;
+        }
+        // for list A finding length
+        ListNode temp1=headA;
+        int lenA=0;
+        while(temp1!=null){
+            lenA++;
+            temp1=temp1.next;
+        }
+        // for list B finding length
+        ListNode temp2=headB;
+        int lenB=0;
+        while(temp2!=null){
+            lenB++;
+            temp2=temp2.next;
+        }
+        
+        // list A is greater than B
+        if(lenA>lenB){
+            return findCross(headB,headA,lenA-lenB);
+            
+        }else{
+            // list B is greater than A
+            return findCross(headA,headB,lenB-lenA);
+        }
+        
+    }
+    
+    // function moves the larger List to equal point in smalller list
+    public ListNode findCross(ListNode small,ListNode large,int distance){
+        ListNode temp1=small;
+        ListNode temp2=large;
+        // moving the large List head element to the same vertical line of small List head
+        while(distance>0){
+            distance--;
+            temp2=temp2.next;
+        }
+        // checking untill we got the intersection or null (no intersection)
+        while(temp1!=temp2){
+            temp1=temp1.next;
+            temp2=temp2.next;
+        }
+
+        return temp1;
+    }
+}
+
+
+Approach 2:
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode temp1=headA;
+        ListNode temp2=headB;
+        //if any of the list got null return null
+        if(temp1==null || temp2==null){
+            return null;
+        }
+        // if temp1 == temp 2 inditially means headA and headB are pointing to same linked list 
+        while(temp1!=temp2){
+            // move ahead
+            temp1=temp1.next;
+            temp2=temp2.next;
+            // intersection point
+            if(temp1==temp2){
+                return temp1;
+            }
+            // assume LL A < LL B
+            // temp2 will take more steps than temp1
+            // move temp1 to headB to complete extra steps by temp2
+            if(temp1==null){
+                temp1=headB;
+            }
+            // temp1 has completed the extra step so vertically temp1 and temp2 should point same 
+            if(temp2==null){
+                temp2=headA;
+            }
+
+        }
+        // only one LL is there both ptr points to same LL
+        return temp1;
+    }
+}
+
