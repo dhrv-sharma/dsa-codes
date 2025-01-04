@@ -1,0 +1,228 @@
+q1.  next greater element 1
+class Solution {
+
+
+    public int  nextGreater(int nums2[],int index){
+        Stack<Integer> stack=new Stack<Integer>();
+        int end=nums2.length-1;
+        int arr[]=new int[nums2.length];
+        Arrays.fill(arr,-1);
+        for(int i=end;i>=index;i--){
+            while(!stack.isEmpty()){
+                if(nums2[i]<stack.peek()){
+                    arr[i]=stack.peek();
+                    break;
+
+                }else{
+                    stack.pop();
+                }
+            }
+            stack.push(nums2[i]);
+
+
+        }
+
+
+        return arr[index];
+
+
+    }
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        ArrayList<Integer> elem=new ArrayList<Integer>();
+        
+        for(int i=0;i<nums1.length;i++){
+            for(int j=0;j<nums2.length;j++){
+                if(nums1[i]==nums2[j]){
+                    elem.add(nextGreater(nums2,j));
+
+                }
+            }
+
+        }
+        int [] ans=new int[elem.size()];
+        int index=0;
+        for(Integer i : elem){
+            ans[index]=i;
+            index++;
+        }
+
+        return ans;
+        
+    }
+}
+
+
+
+q2.next greater element -2 
+appr-1
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        int size=nums.length;
+        int []arr=new int[size];
+        Arrays.fill(arr,-1);
+
+        for(int i=0;i<size;i++){
+            for(int j=i+1;j<=size+i-1;j++){
+                int index=j%size;
+                if(nums[index]>nums[i]){
+                    arr[i]=nums[index];
+                    break;
+                }
+
+            }
+        }
+
+        return arr;
+
+        
+    }
+}
+
+
+appr-2
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        int size=nums.length;
+        int [] ans=new int[size];
+        Stack<Integer> stack=new Stack<Integer>();
+        Arrays.fill(ans,-1);
+
+
+
+        // for making the monotonic stack we need to start iterate from double hypothetical array learn from previoes question
+        for(int i=(size*2)-1 ; i>=0 ; i--){
+            int index=i%size;
+            while(!stack.isEmpty() && stack.peek()<= nums[index]){
+                stack.pop();
+
+            }
+
+            if(i<size){
+                ans[index] = stack.isEmpty() ? -1 : stack.peek();
+                
+            }
+
+
+            stack.push(nums[index]);
+
+        }
+        
+
+
+        return ans;
+        
+    }
+}
+
+
+q3. next smaller element
+public class Solution {
+    public int[] prevSmaller(int[] A) {
+        int [] ans=new int[A.length];
+        Stack<Integer> stack=new Stack<Integer>();
+        
+        for(int i=0;i<A.length;i++){
+            while(!stack.isEmpty() && stack.peek() >= A[i]){
+                stack.pop();
+            }
+            
+            
+            if(stack.isEmpty()){
+                ans[i]=-1;
+            }else{
+                ans[i]=stack.peek();
+            }
+            
+            stack.push(A[i]);
+        
+        }
+        
+        return ans;
+        
+    }
+}
+
+
+
+q4 --> 1475. Final Prices With a Special Discount in a Shop
+class Solution {
+    public int[] finalPrices(int[] prices) {
+        int [] ans=new int[prices.length];
+        Arrays.fill(ans,-1);
+        Stack<Integer> stack=new Stack<Integer>();
+
+        for(int i=prices.length-1;i>=0;i--){
+            while(!stack.isEmpty() && stack.peek() > prices[i]){
+                stack.pop();
+
+            }
+
+            if(stack.isEmpty()){
+                ans[i] =prices[i];
+            }else{
+                ans[i] = prices[i]-stack.peek();
+            }
+            stack.push(prices[i]);
+        }
+
+
+        return ans;
+        
+    }
+}
+
+
+
+q5. trapping rainwater
+class Solution {
+
+    public int [] prefixMax(int [] arr){
+        int [] prefix=new int[arr.length];
+        prefix[0]=arr[0];
+        for(int i=1;i<arr.length;i++){
+            prefix[i]=Math.max(arr[i],prefix[i-1]);
+        }
+
+
+        return prefix;
+    }
+
+
+    public int [] suffixMax(int [] arr){
+        int [] suffix=new int[arr.length];
+        suffix[arr.length-1]=arr[arr.length-1];
+
+        for(int i=arr.length-2;i>=0;i--){
+            suffix[i]=Math.max(suffix[i+1],arr[i]);
+        }
+
+
+        return suffix;
+    }
+    public int trap(int[] height) {
+        int [] prefix=prefixMax(height);
+        int [] suffix=suffixMax(height);
+        
+        int totalWater=0;
+
+        for(int i=0;i<height.length;i++){
+            int leftMax=prefix[i];
+            int rightMax=suffix[i];
+
+            if(height[i] < leftMax && height[i] < rightMax){
+
+                totalWater+=Math.min(leftMax,rightMax) - height[i];
+
+            }
+        }
+
+
+        return totalWater;
+
+       
+        
+    }
+}
+
+
+

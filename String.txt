@@ -1,0 +1,78 @@
+q1. Valid Anagram
+class Solution {
+    public boolean isAnagram(String s, String t) {
+        char [] sChars=s.toCharArray();
+        char [] tChars=t.toCharArray();
+
+        Arrays.sort(sChars);
+        Arrays.sort(tChars);
+
+        return Arrays.equals(sChars,tChars);
+    }
+}
+
+
+q2. Longest Substring Without Repeating Characters
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        ArrayList<Character> elements=new ArrayList<Character>();
+        int start=0;
+        int end=0;
+        int maxCount=0;
+
+        if(s.length() <=1){
+            return s.length();
+        }
+        while(end<s.length() && start<s.length()){
+            if(elements.contains(s.charAt(end))){
+                maxCount=Math.max(maxCount,elements.size());
+                elements.remove(0);
+                start++;
+            }else{
+                elements.add(s.charAt(end));
+                end++;
+            }
+        }
+
+        return maxCount=Math.max(maxCount,elements.size());
+        
+        
+    }
+}
+
+
+q3. valid paranthesis
+class Solution {
+    public boolean isValid(String s) {
+        Stack<Character> brackets=new Stack<Character>();
+        ArrayList<Character> openBracks=new ArrayList<Character>();
+        openBracks.add('{');
+        openBracks.add('(');
+        openBracks.add('[');
+        openBracks.add('}');
+        openBracks.add(')');
+        openBracks.add(']');
+
+        for(int i=0;i<s.length();i++){
+            if(openBracks.indexOf(s.charAt(i)) < 3){
+                brackets.push(s.charAt(i));
+            }else{
+                int val= openBracks.indexOf(s.charAt(i));
+                if(brackets.isEmpty()){
+                    return false;
+                }
+                int top=openBracks.indexOf(brackets.pop());
+                if(top+3==val){
+                    continue;
+                }else{
+                    return false;
+                }
+            }
+
+        }
+
+
+        return brackets.isEmpty() ?  true: false;
+        
+    }
+}

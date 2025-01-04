@@ -1,0 +1,29 @@
+q1. assign cookies
+class Solution {
+    public int findContentChildren(int[] g, int[] s) {
+        // g refers to the children greed array
+        // s refers to the cookie_size array
+        // allot min cookie first  to those whose greed is less 
+        Arrays.sort(g);
+        Arrays.sort(s);
+        // denotes the which cookie is getting allloted
+        int cookie_num=0;
+        // denotes which children greed is getting satisfied
+        int child_num=0;
+
+        while(cookie_num < s.length && child_num < g.length){
+            // you can only satisfy the children greed when greed<=cookie_size
+            if(g[child_num] <= s[cookie_num]){
+                // child satisfied
+                child_num++;
+            }
+            // no matter if cookie is alloted then you cant allot to other 
+            // if cookie is not alloted because of unsatisfaction then it cant be alloted to anyone greed is in sorted manner
+            cookie_num++;
+        }
+
+        /// try to have dry run 
+        return child_num;
+        
+    }
+}

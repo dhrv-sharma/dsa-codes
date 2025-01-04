@@ -1,0 +1,52 @@
+q1.
+# Write your MySQL query statement below
+SELECT product_id FROM Products 
+WHERE low_fats='Y' AND recyclable='Y'
+
+q2.
+# Write your MySQL query statement below
+SELECT name FROM Customer
+WHERE referee_id is NULL OR referee_id !=2
+
+q3.
+# Write your MySQL query statement below
+Select name , population , area FROM World
+WHERE area >= 3000000 OR  population >=25000000
+
+
+method 2:
+Select name,population , area FROM World
+WHERE area >= 3000000
+UNION 
+Select name,population , area FROM World
+WHERE population >= 25000000
+
+
+
+q4.
+# Write your MySQL query statement below
+
+SELECT DISTINCT author_id  AS id FROM Views
+WHERE author_id = viewer_id
+ORDER BY id ASC
+
+
+q5.
+# Write your MySQL query statement below
+SELECT tweet_id FROM Tweets 
+WHERE CHAR_LENGTH(content) >  15
+
+q6.
+# Write your MySQL query statement below
+SELECT emp.name as name , empUNI.unique_id as unique_id
+FROM Employees emp
+LEFT JOIN EmployeeUNI empUNI
+ON emp.id=empUNI.id
+
+
+q7.
+# Write your MySQL query statement below
+SELECT pd.product_name , sl.year , sl.price
+FROM Sales sl
+LEFT JOIN Product pd
+ON sl.product_id = pd.product_id

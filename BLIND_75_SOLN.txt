@@ -1,0 +1,1087 @@
+q1. Valid Anagram
+class Solution {
+    public boolean isAnagram(String s, String t) {
+        char [] sChars=s.toCharArray();
+        char [] tChars=t.toCharArray();
+
+        Arrays.sort(sChars);
+        Arrays.sort(tChars);
+
+        return Arrays.equals(sChars,tChars);
+    }
+}
+
+
+q2. Longest Substring Without Repeating Characters
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        ArrayList<Character> elements=new ArrayList<Character>();
+        int start=0;
+        int end=0;
+        int maxCount=0;
+
+        if(s.length() <=1){
+            return s.length();
+        }
+        while(end<s.length() && start<s.length()){
+            if(elements.contains(s.charAt(end))){
+                maxCount=Math.max(maxCount,elements.size());
+                elements.remove(0);
+                start++;
+            }else{
+                elements.add(s.charAt(end));
+                end++;
+            }
+        }
+
+        return maxCount=Math.max(maxCount,elements.size());
+        
+        
+    }
+}
+
+
+q3. valid paranthesis
+class Solution {
+    public boolean isValid(String s) {
+        Stack<Character> brackets=new Stack<Character>();
+        ArrayList<Character> openBracks=new ArrayList<Character>();
+        openBracks.add('{');
+        openBracks.add('(');
+        openBracks.add('[');
+        openBracks.add('}');
+        openBracks.add(')');
+        openBracks.add(']');
+
+        for(int i=0;i<s.length();i++){
+            if(openBracks.indexOf(s.charAt(i)) < 3){
+                brackets.push(s.charAt(i));
+            }else{
+                int val= openBracks.indexOf(s.charAt(i));
+                if(brackets.isEmpty()){
+                    return false;
+                }
+                int top=openBracks.indexOf(brackets.pop());
+                if(top+3==val){
+                    continue;
+                }else{
+                    return false;
+                }
+            }
+
+        }
+
+
+        return brackets.isEmpty() ?  true: false;
+        
+    }
+}
+
+Q4.Longest Repeating character replacement
+class Solution {
+    public int characterReplacement(String s, int k) {
+        int len = s.length();
+        int left = 0;
+        int right = 0;
+        AtomicInteger maxFreq=new AtomicInteger(0);
+        int ans = 0;
+        Map<Character, Integer> count = new HashMap<>();
+
+        while (right < len) {
+            char current = s.charAt(right);
+            int substrlen = right - left + 1;
+
+            
+            count.put(current, count.getOrDefault(current, 0) + 1);
+
+            count.forEach((key,value)->{
+                maxFreq.set(Math.max(maxFreq.get(),value));
+
+            });
+
+            
+           
+
+            
+            if (substrlen - maxFreq.get() <= k) {
+                ans = Math.max(ans, substrlen);
+                right++;
+                continue;
+            }
+
+            
+            char leftChar = s.charAt(left);
+            if (count.get(leftChar) == 1) {
+                count.remove(leftChar);
+            } else {
+                count.replace(leftChar, count.get(leftChar) - 1);
+            }
+            left++;
+            right++;
+        }
+
+        return ans;
+
+    }
+}
+
+
+q5. group anagrams
+class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        List<List<String>> ans = new ArrayList<List<String>>();
+        Map<String, List<String>> count = new HashMap<String, List<String>>();
+
+        for (int i = 0; i < strs.length; i++) {
+            char[] current = strs[i].toCharArray();
+            Arrays.sort(current);
+            List<String> temp = new ArrayList<String>();
+            String sort = Arrays.toString(current);
+            if (count.containsKey(sort)) {
+                temp.addAll(count.get(sort));
+            }
+            temp.add(strs[i]);
+            count.put(sort, temp);
+        }
+
+        for (List<String> temp : count.values()) {
+            ans.add(temp);
+        }
+
+        return ans;
+
+    }
+}
+
+
+q6.
+class Solution {
+    public int countSubstrings(String s) {
+        int left=0;
+        int right=0;
+        int ans=0;
+
+
+        for(int i =0 ;i<s.length();i++){
+            // covering all the odd length pallindrome
+            left = i;
+            right =i;
+            while(left >=0 && right <s.length() && s.charAt(left)==s.charAt(right)){
+                left--;
+                right++;
+                ans+=1;
+            }
+
+
+            // covering the even length pallindrome 
+            left =i;
+            right=i+1;
+
+            while(left>=0 && right<s.length() && s.charAt(left) == s.charAt(right)){
+                ans+=1;
+                left--;
+                right++;
+            }
+
+        }
+
+
+        return ans;
+        
+    }
+}
+
+
+q7.Longest Palndromic substring
+class Solution {
+    public String longestPalindrome(String s) {
+        int left = 0;
+        int right = 0;
+        int ans_length = -1;
+        String ans = "";
+
+        for (int i = 0; i < s.length(); i++) {
+            left = i;
+            right = i;
+            while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+                int currentLength = right - left + 1;
+                ans = currentLength > ans_length ? s.substring(left, right + 1) : ans;
+                ans_length = currentLength > ans_length ? currentLength : ans_length;
+                left--;
+                right++;
+            }
+
+            left = i;
+            right = i + 1;
+            while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+                int currentLength = right - left + 1;
+                ans = currentLength > ans_length ? s.substring(left, right + 1) : ans;
+                ans_length = currentLength > ans_length ? currentLength : ans_length;
+
+                left--;
+                right++;
+
+            }
+
+        }
+
+        return ans;
+
+    }
+}
+
+
+
+q8. minimum window substring
+class Solution {
+    public String minWindow(String s, String t) {
+
+        int lengthS = s.length();
+        int lengthT = t.length();
+
+        // checks for the boundary values cases 
+        if (lengthT == 0 || lengthS < lengthT) {
+            return "";
+        }
+
+        // stores the count of character in string t
+        Map<Character, Integer> needMap = new HashMap<Character, Integer>();
+     
+        for (int i = 0; i < lengthT; i++) {
+            needMap.put(t.charAt(i), needMap.getOrDefault(t.charAt(i), 0) + 1);
+        }
+
+        // stores the count of characters in window 
+
+        Map<Character, Integer> window = new HashMap<Character, Integer>();
+        // how many conditons we have statsified 
+        int have = 0;
+        // we are focusing on how many unique characters are there to make reuqired string 
+        int need = needMap.size();
+        int strLen = Integer.MAX_VALUE;
+        String str = "";
+        int left = 0;
+        int right = 0;
+
+        for (; right < lengthS; right++) {
+            // current element check
+            Character current = s.charAt(right);
+            window.put(current, window.getOrDefault(current, 0) + 1);
+            
+            // if the current element is part of string t and if we have enough current which are required to make t
+            if (needMap.containsKey(current) && window.get(current).equals(needMap.get(current))) {
+                have += 1;
+            }
+            
+            // to find min string we remove use less character not part of string t and if left char is part of string then we need to check have constion
+            while (have == need) {
+                // min string 
+                int sbstrLen = right - left + 1;
+                if (sbstrLen < strLen) {
+                    strLen = sbstrLen;
+                    str = s.substring(left, right + 1);
+                }
+                
+                // left character
+                Character c = s.charAt(left);
+                if (window.get(c) <= 1) {
+                    // left char get zero avoid -1 
+                    window.put(c, 0);
+                } else {
+                    // left char value decrement 
+                    window.put(c, window.get(c) - 1);
+                }
+                // check weather the c is enough to make reuired string or not 
+                if (needMap.containsKey(c) && window.get(c) < needMap.get(c)) {
+                    have--;
+                }
+                // left char removed
+                left++;
+            }
+        }
+
+        return str;
+
+    }
+}
+
+
+09.Continer with most water
+class Solution {
+    public int maxArea(int[] height) {
+        int left=0;
+        int right=height.length-1;
+        int ans=0;
+        while(left<right){
+            // calculating area
+            int area=(right-left)*Math.min(height[left],height[right]);
+            ans=Math.max(ans,area);
+            // move that pinter whose height is low bevause to maximize the area we need to either increase distance or height sitance is take initally max so left if height 
+            if(height[left]<height[right]){
+                left++;
+            }else{
+                right--;
+            }
+
+
+        }
+
+
+        return ans;
+        
+    }
+}
+
+
+q10.
+//{ Driver Code Starts
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void main(String args[]) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int tc = Integer.parseInt(br.readLine());
+
+        while (tc-- > 0) {
+            String s[] = br.readLine().split(" ");
+
+            Solution obj = new Solution();
+
+            String encodedString = obj.encode(s);
+            String decodedStrings[] = obj.decode(encodedString);
+
+            for (String x : decodedStrings) {
+                System.out.print(x + " ");
+            }
+            System.out.println();
+            System.out.println("~");
+        }
+    }
+}
+// } Driver Code Ends
+
+
+class Solution {
+
+    public String encode(String s[]) {
+        // write your logic to encode the strings
+        // adding stringlength#in at initial of new word
+        String encoded="";
+        for(int i=0;i<s.length;i++){
+            int len=s[i].length();
+            encoded+=Integer.toString(len)+"#"+s[i];
+            
+        }
+      
+        return encoded;
+    }
+
+    public String[] decode(String s) {
+        // write your logic to decode the string
+        ArrayList<String> ansList=new ArrayList<String>();
+        
+        for(int i=0;i<s.length();i++){
+            //  i points to the start of number and j points to #
+            
+            int j=i+1;
+            while(j<s.length()&&s.charAt(j)!='#'){
+                j++;
+            }
+            
+            // length of word
+            int len=Integer.parseInt(s.substring(i,j));
+            // start of word index
+            int stringIndex=j+1;
+            // end of word index
+            int stringEndIndex=stringIndex+len-1;
+            // susbtring 
+            ansList.add(s.substring(stringIndex,stringEndIndex+1));
+            i=stringEndIndex;
+            
+            
+        }
+        String[] arr=new String[ansList.size()];
+        int i=0;
+        for(String m : ansList){
+            arr[i]=m;
+            i++;
+        }
+        
+        return arr;
+    }
+}
+
+q11. palidrom string
+class Solution {
+    public boolean isPalindrome(String s) {
+        s=s.replaceAll("[^a-z0-9A-Z]","");
+        s=s.toLowerCase();
+        String b="";
+        for(int i=s.length()-1;i>=0;i--){
+            b+=s.charAt(i);
+        }
+        
+
+        return s.equals(b);
+        
+    }
+}
+
+
+
+q12.merge  k sorted linked lists
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ * int val;
+ * ListNode next;
+ * ListNode() {}
+ * ListNode(int val) { this.val = val; }
+ * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        PriorityQueue<Integer> nodeValue = new PriorityQueue<Integer>();
+
+        // add the all elements in priority queue
+        for (int i = 0; i < lists.length; i++) {
+            ListNode current = lists[i];
+            while (current != null) {
+                nodeValue.add(current.val);
+                current = current.next;
+            }
+        }
+
+        // head of ans
+        ListNode head = new ListNode();
+        if (nodeValue.isEmpty()) {
+            return null;
+        }
+        head.val = nodeValue.poll();
+        ListNode last = head;
+
+        // priority queue auto sort the content and pop the min element of currnet array
+        while (!nodeValue.isEmpty()) {
+            ListNode temp = new ListNode();
+            temp.val = nodeValue.poll();
+            last.next = temp;
+            last = temp;
+        }
+
+        return head;
+
+    }
+}
+
+
+
+
+q13. Top K Frequent Elements
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        if (nums.length == 1) {
+            return nums;
+        }
+        // sort the elements first  to enter one element only once 
+        Arrays.sort(nums);
+        int[] ans = new int[k];
+        // keep the note of all  unique counts
+        PriorityQueue<Integer> countCompare = new PriorityQueue<Integer>(Collections.reverseOrder());
+        // key : count --> value : elements that possess that count
+        Map<Integer, ArrayList<Integer>> countValue = new HashMap<Integer, ArrayList<Integer>>();
+        // first element 
+        int last = nums[0];
+        int count = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == last) {
+                count++;
+            } else {
+                // already exhist count try to group all the elements who possess same counts 
+                if (countValue.containsKey(count)) {
+                    ArrayList<Integer> temp = countValue.get(count);
+                    temp.add(last);
+                    countValue.put(count, temp);
+                } else {
+                    // new count new group
+                    ArrayList<Integer> temp = new ArrayList<Integer>();
+                    temp.add(last);
+                    countValue.put(count, temp);
+                }
+                // new count 
+                if (!countCompare.contains(count)) {
+                    countCompare.add(count);
+                }
+                count = 1;
+                last = nums[i];
+            }
+
+        }
+
+       
+        // last element case 
+        if (count != 0) {
+            if (countValue.containsKey(count)) {
+                ArrayList<Integer> temp = countValue.get(count);
+                temp.add(last);
+                countValue.put(count, temp);
+            } else {
+                ArrayList<Integer> temp = new ArrayList<Integer>();
+                temp.add(last);
+                countValue.put(count, temp);
+            }
+            if (!countCompare.contains(count)) {
+                countCompare.add(count);
+            }
+
+        }
+        
+
+        // reading out the data 
+        int index = 0;
+        while (index < k && !countCompare.isEmpty()) {
+            int elem = countCompare.poll();
+            // all elements of same count 
+            ArrayList<Integer> elements = countValue.get(elem);
+            int curr = 0;
+            // we need only unique elements whos possess same count with max elem k
+            while (index < k && curr < elements.size()) {
+                ans[index] = elements.get(curr);
+                index++;
+                curr++;
+            }
+
+        }
+
+        return ans;
+
+    }
+}
+
+
+q14.find median  of datasets
+class MedianFinder {
+    // in order to solve this problem we make two maxHeap minheap
+    //  which follows two conditon 
+    // cond-1 : size difference between both heap should be 0-1
+    // because if totalNum is odd - then heap with larger size return the mid elem
+    //  if totalNum  is even - then both heap will get automaticall eqauly item and both peek return mid elem respective of their heap
+    //  condtion-2 : all elem of minHeap should be greater than maxHeap
+    
+    // small heap is max-heap
+    PriorityQueue<Integer> maxHeap=new PriorityQueue<Integer>(Collections.reverseOrder());
+    //  large heap is min-heap
+    PriorityQueue<Integer> minHeap=new PriorityQueue<Integer>();
+
+    public MedianFinder() {
+        
+    }
+    
+
+    //  condition 1  check  size length 
+    public void lengthCheck(){
+         while( Math.abs(minHeap.size()-maxHeap.size()) > 1){
+            if(minHeap.size() > maxHeap.size()){
+                int a = minHeap.poll();
+                maxHeap.add(a);
+            }else{
+                int a =maxHeap.poll();
+                minHeap.add(a);
+            }
+        }
+    }
+    
+    public void addNum(int num) {
+        maxHeap.add(num);
+        // condition 2 checked wheather all elem of minHeap is greater from all elements of maxHeap
+        lengthCheck();
+        while(!minHeap.isEmpty() && !maxHeap.isEmpty() && minHeap.peek() < maxHeap.peek()){
+            int a = maxHeap.poll();
+            minHeap.add(a);
+        }
+        lengthCheck();  
+    }
+    
+    public double findMedian() {
+        // numebr of elem even
+        if(minHeap.size()==maxHeap.size()){
+            double val=((minHeap.peek() + maxHeap.peek())/2.0);  
+            return val;
+        }
+        //  number of elem odd
+        return minHeap.size()>maxHeap.size() ? minHeap.peek() : maxHeap.peek() ;
+        
+    }
+}
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
+
+
+
+
+q15. Max product subarray
+class Solution {
+    public int maxProduct(int[] nums) {
+        int prefix=1;
+        int suffix=1;
+        int ans=Integer.MIN_VALUE;
+        for(int i=0;i<nums.length;i++){
+            if(prefix==0) prefix =1;
+            if(suffix==0) suffix =1;
+            prefix=prefix*nums[i];
+            suffix=suffix*nums[nums.length-i-1];
+            ans=Math.max(ans,Math.max(prefix,suffix));
+        }
+        return ans;
+        
+    }
+}
+
+
+
+q16.contains duplicate
+class Solution {
+    public boolean containsDuplicate(int[] nums) {
+        Arrays.sort(nums);
+        for(int i=1;i<nums.length;i++){
+            if(nums[i]==nums[i-1]){
+                return true;
+            }
+        }
+
+
+        return false;
+        
+    }
+}
+
+
+q17.Product of array except itself
+class Solution {
+    public int[] productExceptSelf(int[] nums) {
+        int len=nums.length;
+        
+        int [] prefixProduct=new int[len];
+        int [] suffixProduct=new int[len];
+        int prefix=1;
+        int suffix=1;
+        for(int i=0;i<len;i++){
+            prefix=prefix*nums[i];
+            suffix=suffix*nums[len-i-1];
+            prefixProduct[i]=prefix;
+            suffixProduct[len-i-1]=suffix;
+        }
+
+        int [] ans=new int[len];
+        for(int i=0;i<len;i++){
+            int left= i==0 ? 1 : prefixProduct[i-1];
+            int right= i==len-1 ? 1 : suffixProduct[i+1] ;
+            ans[i]=left*right;
+        }
+
+        return ans;
+
+
+        
+    }
+}
+
+
+q18.insert intervals
+class Solution {
+
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        //  interval are sorted 
+        ArrayList<ArrayList<Integer>> ansList = new ArrayList<ArrayList<Integer>>();
+        if (intervals.length == 0) {
+            int[][] ans = { { newInterval[0], newInterval[1] } };
+            return ans;
+        }
+        for (int i = 0; i < intervals.length; i++) {
+            // case 1 newInterval lies before the i interval  hence all the interval after i also forward
+            if (newInterval[1] < intervals[i][0]) {
+                // addAll
+                ArrayList<Integer> temp = new ArrayList<Integer>();
+                temp.add(newInterval[0]);
+                temp.add(newInterval[1]);
+                ansList.add(temp);
+                for (int j = i; j < intervals.length; j++) {
+                    ArrayList<Integer> tp = new ArrayList<Integer>();
+                    tp.add(intervals[j][0]);
+                    tp.add(intervals[j][1]);
+                    ansList.add(tp);
+                }
+                break;
+            } else if (newInterval[0] > intervals[i][1]) {
+                // case 2 interval lies after the i interval 
+                ArrayList<Integer> ans = new ArrayList<Integer>();
+                ans.add(intervals[i][0]);
+                ans.add(intervals[i][1]);
+                ansList.add(ans);
+
+            } else {
+                // over lapping condtion
+                // x point
+                newInterval[0] = Math.min(intervals[i][0], newInterval[0]);
+                // y point
+                newInterval[1] = Math.max(intervals[i][1], newInterval[1]);
+            }
+
+
+            // condtion for the last index interval 
+            if (i == intervals.length - 1) {
+                ArrayList<Integer> ans = new ArrayList<Integer>();
+                ans.add(newInterval[0]);
+                ans.add(newInterval[1]);
+                ansList.add(ans);
+            }
+
+        }
+
+        int ans[][] = new int[ansList.size()][2];
+        int count = 0;
+        for (ArrayList<Integer> list : ansList) {
+            ans[count][0] = list.get(0);
+            ans[count][1] = list.get(1);
+            count++;
+
+        }
+        return ans;
+
+    }
+}
+
+
+
+q19. merge the overlapping intervals
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        ArrayList<ArrayList<Integer>> ansList=new ArrayList<ArrayList<Integer>>();
+
+        Arrays.sort(intervals,(a,b)->Integer.compare(a[0],b[0]));
+        if(intervals.length<=1){
+            return intervals;
+        }
+        int [] current={intervals[0][0],intervals[0][1]};
+
+        for(int i=1;i<intervals.length;i++){
+            // current lies below the i interval 
+            int x_intv=intervals[i][0];
+            int y_intv=intervals[i][1];
+            if(x_intv>current[1]){
+                ArrayList<Integer> temp=new ArrayList<Integer>();
+                temp.add(current[0]);
+                temp.add(current[1]);
+                ansList.add(temp);
+                current[0]=x_intv;
+                current[1]=y_intv;
+            }else if(y_intv<current[0]){
+                // current lies after the i interval 
+                ArrayList<Integer> temp=new ArrayList<Integer>();
+                temp.add(x_intv);
+                temp.add(y_intv);
+                ansList.add(temp);
+
+            }else{
+                // current overlaps
+                current[0]=Math.min(current[0],x_intv);
+                current[1]=Math.max(current[1],y_intv);
+            }
+            
+            // last index condtion
+            if(i==intervals.length-1){
+                ArrayList<Integer> temp=new ArrayList<Integer>();
+                temp.add(current[0]);
+                temp.add(current[1]);
+                ansList.add(temp);
+
+            }
+
+            
+        }
+
+        int [][] ans=new int[ansList.size()][2];
+        int curr=0;
+        for(ArrayList<Integer> list: ansList){
+            ans[curr][0]=list.get(0);
+            ans[curr][1]=list.get(1);
+            curr++;
+        }
+
+
+        return ans;
+        
+    }
+}
+
+
+
+q20. Climb stairs
+class Solution {
+    // memoization
+    int [] dp;
+
+    public int downStairs(int index){
+        // reached at last index
+        if(index==0) return 1;
+        // reacehd at second last index index so only one jump allowed
+        if(index==1) return 1;
+        
+        // arleady solved
+        if(dp[index]!=-1) return dp[index];
+        // one step down
+        int oneStep=downStairs(index-1);
+        // two step down
+        int twoStep=downStairs(index-2);
+        // total way
+        dp[index]=oneStep+twoStep;
+        return dp[index];
+    }
+    public int climbStairs(int n) {
+        // there are 5 stairs then 5->4->3->2->1->0
+        dp=new int[n+1];
+        Arrays.fill(dp,-1);
+
+        return downStairs(n);
+        
+    }
+}
+
+q21.
+robber house
+class Solution {
+    int [][] dp;
+
+    public int robbery(int [] nums,int currHouse,int last){
+        // reached at the last house
+        if(currHouse==0){
+            if(last==0){
+              // second last home not picked
+              return nums[0];
+            }
+            // second last home picked
+            return 0;
+        }
+
+        if(dp[currHouse][last]!=-1){
+            return dp[currHouse][last];
+        }
+        int pick=0;
+        if(last==0){
+            //  last house not picked
+            pick=nums[currHouse]+robbery(nums,currHouse-1,1);
+        }
+        // last house picked
+        int notPick=robbery(nums,currHouse-1,0);
+
+        // max robbery
+        dp[currHouse][last]=Math.max(pick,notPick);
+
+        return dp[currHouse][last];
+
+    }
+    public int rob(int[] nums) {
+        int len=nums.length;
+        dp=new int [len][2];
+        for(int i=0;i<len;i++){
+            Arrays.fill(dp[i],-1);
+        }
+
+        return robbery(nums,len-1,0);
+        
+    }
+}
+
+
+q22. unique paths
+class Solution {
+
+    public int [][] dp;
+
+    public int robotMove(int m,int n,int currRow,int currCol){
+        if(currRow <0 || currCol<0){
+            return 0;
+        }
+        if(currRow==0 && currCol==0){
+            return 1;
+        }
+
+        if(dp[currRow][currCol]!=-1){
+            return dp[currRow][currCol];
+        }
+
+        int topMov=robotMove(m,n,currRow-1,currCol);
+        int leftMov=robotMove(m,n,currRow,currCol-1);
+
+
+        return dp[currRow][currCol]=topMov+leftMov;
+
+    }
+    public int uniquePaths(int m, int n) {
+        dp=new int[m][n];
+        for(int i=0;i<m;i++){
+            Arrays.fill(dp[i],-1);
+        }
+
+        return robotMove(m,n,m-1,n-1);
+        
+    }
+}
+
+q23.Longest subsequence
+class Solution {
+
+    int [][] dp;
+
+    public int commonSeq(String text1,String text2,int str1,int str2){
+        if(str1<0 || str2<0){
+            return 0;
+        }
+
+        if(dp[str1][str2]!=-1){
+            return dp[str1][str2];
+        }
+
+        int same=0;
+        if(text1.charAt(str1) == text2.charAt(str2)){
+            same=1+commonSeq(text1,text2,str1-1,str2-1);
+        }
+
+        int left=commonSeq(text1,text2,str1-1,str2);
+        int right=commonSeq(text1,text2,str1,str2-1);
+
+        dp[str1][str2]=Math.max(same,Math.max(left,right));
+        return dp[str1][str2];        
+    }
+    public int longestCommonSubsequence(String text1, String text2) {
+        int str1=text1.length();
+        int str2=text2.length();
+
+        dp=new int[str1][str2];
+        for(int i=0;i<str1;i++){
+            Arrays.fill(dp[i],-1);
+        }
+
+
+        return commonSeq(text1,text2,str1-1,str2-1);
+        
+    }
+}
+
+
+
+q24. Robbery HOUSE -II
+class Solution {
+
+
+    
+
+    // similar code to robbery house
+    public int robbery(int [] nums,int curr,int last,int [][] dp){
+        if(curr<0){
+            return 0;
+        }
+        
+        if(curr==0){
+            if(last ==0){
+                return nums[0];
+            }
+            return 0;
+        }
+
+        if(dp[curr][last]!=-1){
+            return dp[curr][last];
+        }
+        int pick=0;
+        if(last==0){
+            pick=nums[curr] + robbery(nums,curr-1,1,dp);
+        }
+        int notPick=robbery(nums,curr-1,0,dp);
+
+        return dp[curr][last]=Math.max(pick,notPick);
+
+
+    }
+    public int rob(int[] nums) {
+        if(nums.length==1){
+            return nums[0];
+        }
+        int len=nums.length;
+        int [][] dp1=new int[len][2];
+        int [][] dp2=new int[len][2];
+
+        for(int i=0;i<len;i++){
+            Arrays.fill(dp1[i],-1);
+            Arrays.fill(dp2[i],-1);
+        }
+
+        int[] nums2=Arrays.copyOfRange(nums,0,len-1);
+        int[] nums3=Arrays.copyOfRange(nums,1,len);
+        
+        // see our code checks the last house 
+        // so last house is selceted once when one is not selected and visa versa
+        // first house selected
+        int firstHouse=robbery(nums2,nums2.length-1,0,dp1);
+        // last house selected
+        int secondHouse=robbery(nums3,nums3.length-1,0,dp2);
+
+        return Math.max(firstHouse,secondHouse);
+
+
+
+        
+    }
+}
+
+
+
+q25.Longest increasing subsequence 
+class Solution {
+
+    int [][] dp;
+    public int increasingSubs(int [] nums,int last,int current){
+        if(nums.length==1){
+            return 1;
+        }
+        if(current==nums.length){
+            return 0;
+        }
+        
+        // increament to get the correct value
+        if( dp[current][last+1]!=-1){
+            return dp[current][last+1];
+        }
+
+
+        int notPick=increasingSubs(nums,last,current+1);
+        int pick=0;
+        // in case of no elem is picked untill now 
+        if(last==-1 || nums[current]>nums[last]){
+            pick=1+increasingSubs(nums,current,current+1);
+        }
+
+        dp[current][last+1]=Math.max(notPick,pick);
+        return dp[current][last+1];
+    }
+    public int lengthOfLIS(int[] nums) {
+        // initilally no elemnet is selected which marked as last as -1 
+        // to have access we stores it in last +1
+        // dp[current][last] actually stores at dp[current][last+1]
+        dp=new int[nums.length][nums.length+1];
+        for(int i=0;i<nums.length;i++){
+            Arrays.fill(dp[i],-1);
+
+        }
+        
+        // so intiallly no last item selected
+        return increasingSubs(nums,-1,0);
+        
+    }
+}
+

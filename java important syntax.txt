@@ -1,0 +1,80 @@
+------------------------------------------Comparator and Sort 2d -------------------------------------------------
+
+import java.util.*;
+public class Main
+{
+	public static void main(String[] args) {
+		System.out.println("Hello World");
+		ArrayList<ArrayList<Integer>> number = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> temp=new ArrayList<Integer>();
+		temp.add(2);
+		temp.add(1);
+		temp.add(210);
+		temp.add(23);
+		ArrayList<Integer> temp2=new ArrayList<Integer>();
+		temp2.add(214);
+		temp2.add(-1);
+		temp2.add(210);
+		temp2.add(23);
+		ArrayList<Integer> temp3=new ArrayList<Integer>();
+		temp3.add(8);
+		temp3.add(11);
+		temp3.add(0);
+		temp3.add(23);
+		number.add(temp);
+		number.add(temp2);
+		number.add(temp3);
+		
+		Comparator<ArrayList<Integer>> comp=new Comparator<ArrayList<Integer>>(){
+		    public int compare(ArrayList<Integer> a,ArrayList<Integer> b){
+		        Collections.sort(a,Collections.reverseOrder());
+		        Collections.sort(b,Collections.reverseOrder());
+		        return Integer.compare(b.get(0),a.get(0));
+		    };
+		};
+		
+		
+		
+		Collections.sort(number,comp);
+		System.out.println(number.toString());
+		
+		int [] [] dimArray=new int[3][3];
+		dimArray[0][0]=4;
+		dimArray[0][1]=10;
+		dimArray[0][2]=2;
+		
+		dimArray[1][0]=4;
+		dimArray[1][1]=11;
+		dimArray[1][2]=1;
+		
+		dimArray[2][0]=-4;
+		dimArray[2][1]=1;
+		dimArray[2][2]=2;
+		
+		
+		Arrays.sort(dimArray,(a,b)->{
+		    Arrays.sort(a);
+		    Arrays.sort(b);
+		    return Integer.compare(b[0],a[0]);
+		});
+
+
+	        Arrays.sort(dimArray,(a,b)->Integer.compare(b[0],a[0]));
+
+
+		
+		System.out.println(Arrays.toString(dimArray[0]));
+		System.out.println(Arrays.toString(dimArray[1]));
+		System.out.println(Arrays.toString(dimArray[2]));
+		
+
+		
+		
+		
+		
+	}
+}
+
+
+
+------------------------------------------------------------------------------------------------------------
