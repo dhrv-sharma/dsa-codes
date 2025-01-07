@@ -50,3 +50,133 @@ SELECT pd.product_name , sl.year , sl.price
 FROM Sales sl
 LEFT JOIN Product pd
 ON sl.product_id = pd.product_id
+
+
+q8.
+# Write your MySQL query statement below
+SELECT v.customer_id,COUNT(customer_id) AS count_no_trans
+FROM Visits v
+LEFT JOIN Transactions t
+ON v.visit_id = t.visit_id
+WHERE t.transaction_id is NULL
+GROUP BY customer_id
+
+
+q9.
+# Write your MySQL query statement below
+SELECT  w1.id
+FROM Weather w1
+INNER JOIN Weather w2
+ON DATEDIFF(w1.recordDate,w2.recordDate) =1
+AND w1.temperature > w2.temperature
+
+
+
+q10.
+# Write your MySQL query statement below
+SELECT a1.machine_id , ROUND(AVG(a2.timestamp - a1.timestamp),3) as processing_time
+FROM Activity a1
+INNER JOIN Activity a2
+ON a1.process_id = a2.process_id
+AND a1.machine_id = a2.machine_id
+AND a1.timestamp < a2.timestamp
+GROUP BY a1.machine_id
+
+
+
+q11.
+# Write your MySQL query statement below
+SELECT emp.name,bn.bonus
+FROM EMPLOYEE emp
+LEFT JOIN BONUS bn
+ON emp.empId = bn.empId
+WHERE bn.bonus < 1000 OR bn.bonus  is NULL
+
+
+q12.
+# Write your MySQL query statement below
+SELECT st.student_id,st.student_name,sub.subject_name ,COUNT(ex.subject_name) as attended_exams
+FROM Students st
+CROSS JOIN Subjects sub
+LEFT JOIN Examinations ex
+ON st.student_id = ex.student_id AND sub.subject_name = ex.subject_name
+GROUP BY st.student_id,sub.subject_name,st.student_name
+ORDER BY st.student_id,sub.subject_name
+
+
+q13.
+# Write your MySQL query statement below
+SELECT e1.name as name
+FROM Employee e1
+INNER JOIN Employee e2
+ON e1.id = e2.managerId
+GROUP BY e2.managerId
+HAVING COUNT(e2.managerID)>=5
+
+
+q14.
+# Write your MySQL query statement below
+SELECT s.user_id ,IFNULL(ROUND(SUM(action='confirmed') / COUNT(s.user_id) , 2),0) as confirmation_rate
+FROM Signups  s
+LEFT JOIN Confirmations c
+ON s.user_id =  c.user_id
+GROUP BY s.user_id
+
+
+q15.
+# Write your MySQL query statement below
+SELECT * 
+FROM Cinema 
+WHERE id%2 !=0 AND description != 'boring'
+ORDER BY rating DESC
+
+
+q16.
+# Write your MySQL query statement below
+SELECT p.product_id , IFNULL(ROUND(SUM(p.price * u.units)/SUM(u.units),2),0) AS average_price
+FROM Prices p
+LEFT JOIN UnitsSold u
+ON p.product_id = u.product_id
+AND u.purchase_date >= p.start_date
+AND u.purchase_date <= p.end_date
+GROUP BY p.product_id
+
+
+q17.
+# Write your MySQL query statement below
+SELECT p.project_id ,ROUND(AVG(e.experience_years),2) as average_years
+FROM Project p
+LEFT JOIN Employee  e
+ON p.employee_id = e.employee_id
+GROUP BY p.project_id
+
+
+q18.
+# Write your MySQL query statement below
+SELECT contest_id , ROUND((COUNT(DISTINCT user_id)/(SELECT COUNT(*) FROM Users ))*100,2) as percentage
+FROM Register
+GROUP BY contest_id
+ORDER BY percentage DESC , contest_id
+
+
+q19.
+# Write your MySQL query statement below
+SELECT query_name , ROUND(AVG(rating/position),2) as quality , ROUND(AVG(IF(rating < 3 , 1,0))*100,2) as poor_query_percentage
+FROM Queries
+GROUP BY query_name
+
+
+q20.
+# Write your MySQL query statement below
+SELECT 
+DATE_FORMAT(trans_date,'%Y-%m') as month,
+country,
+COUNT(*) as trans_count,
+SUM(state ='approved') as approved_count,
+SUM(amount) as trans_total_amount,
+SUM(if(state='approved',amount,0)) as approved_total_amount
+FROM Transactions
+GROUP BY month,country
+
+
+
