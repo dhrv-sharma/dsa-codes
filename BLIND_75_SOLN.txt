@@ -1085,3 +1085,320 @@ class Solution {
     }
 }
 
+
+
+
+q26.Word break problem
+class Solution {
+
+    int [] dp;
+
+    public int breaks(String s,int current,int length,List<String> wordDict){
+        //  we are only moving forward when we have true in back string
+        if(current>=length){
+            return 1;
+            
+        }
+        
+        // memoization
+        if(dp[current]!=-1){
+            return dp[current];
+        }
+
+
+        // check wheather we have full word or not 
+        if(wordDict.contains(s.substring(current,length))){
+            return dp[current]=1;
+
+        }
+        
+        // checking for the variable length string
+        for(int i=current+1;i<=length;i++){
+            String temp=s.substring(current,i);
+            // checking wheather dictionary have futre words as well or not 
+            if(wordDict.contains(temp) && breaks(s,i,length,wordDict) ==1){
+                return dp[current]=1;
+            }
+        }
+
+        return dp[current]=0;
+    }
+    public boolean wordBreak(String s, List<String> wordDict) {
+        dp =new int[s.length()+1];
+        Arrays.fill(dp,-1);
+        return breaks(s,0,s.length(),wordDict) == 1 ? true : false;
+        
+    }
+}
+
+
+
+
+
+q27. Combination sum IV
+class Solution {
+
+    int dp[];
+
+    public int solve(int[] nums, int curr_target) {
+        if (curr_target == 0) {
+            return 1;
+        }
+
+        if (dp[curr_target] != -1) {
+            return dp[curr_target];
+        }
+
+        int curr = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] <= curr_target) {
+                curr += solve(nums, curr_target - nums[i]);
+            }
+        }
+
+        return dp[curr_target] = curr;
+    }
+
+    public int combinationSum4(int[] nums, int target) {
+        dp = new int[target + 1];
+        Arrays.fill(dp, -1);
+        return solve(nums, target);
+
+    }
+}
+
+
+q28. jump game
+class Solution {
+
+    int[] dp;
+
+    public int jumps(int[] nums, int current) {
+        if (current >= nums.length - 1) {
+            return 1;
+        }
+
+        if (dp[current] != -1) {
+            return dp[current];
+        }
+
+        for (int i = 1; i <= nums[current]; i++) {
+            if (jumps(nums, current + i) == 1) {
+                return dp[current] = 1;
+
+            }
+        }
+
+        return dp[current] = 0;
+
+    }
+
+    public boolean canJump(int[] nums) {
+        dp = new int[nums.length];
+        Arrays.fill(dp, -1);
+        return jumps(nums, 0) == 1 ? true : false;
+
+    }
+}
+
+
+
+q29. Decode ways
+class Solution {
+
+    int dp[];
+
+    public int decodeWays(String s, int current, int len) {
+
+        if (current > len - 1) {
+            return 1;
+        }
+
+        if (current == len - 1) {
+            if (s.substring(current, current + 1).equals("0")) {
+                return 0;
+            }
+            return 1;
+        }
+
+        if (dp[current] != -1) {
+            return dp[current];
+        }
+
+        int onePick = 0;
+        if (Integer.parseInt(s.substring(current, current + 1)) != 0) {
+            onePick = decodeWays(s, current + 1, len);
+        }
+
+        int twoPick = 0;
+        int value = Integer.parseInt(s.substring(current, current + 2));
+        if (value < 27 && s.charAt(current) != '0') {
+            twoPick = decodeWays(s, current + 2, len);
+        }
+
+        return dp[current] = onePick + twoPick;
+    }
+
+    public int numDecodings(String s) {
+        int len = s.length();
+        dp = new int[len];
+        Arrays.fill(dp, -1);
+
+        return decodeWays(s, 0, len);
+
+    }
+}
+
+
+
+q30.coins exchange 
+class Solution {
+
+    int [][] dp ;
+
+    public int coinsCalc (int [] coins ,int amount_left,int index){
+        if(amount_left==0){
+            return 0;
+        }
+
+        if(index==0){
+            if( amount_left%coins[index] == 0){
+                return amount_left/coins[index];
+            }
+            return (int) 1e7;
+        }
+
+        if(dp[index][amount_left]!=-1){
+            return dp[index][amount_left];
+        }
+
+        int notPick = coinsCalc(coins,amount_left,index-1);
+        int pick = (int) 1e7;
+        if(coins[index]<=amount_left){
+            pick=1+coinsCalc(coins,amount_left-coins[index],index);
+
+        }
+
+        return dp[index][amount_left] = Math.min(notPick,pick);
+
+
+    }
+    public int coinChange(int[] coins, int amount) {
+        dp=new int[coins.length][amount+1];
+        for(int i=0;i<coins.length;i++){
+            Arrays.fill(dp[i],-1);
+        }
+
+        int ans =  coinsCalc(coins,amount,coins.length-1);
+        return ans >= (int) 1e7 ? -1 : ans;
+        
+    }
+}
+
+
+q31. sum of two number without + 
+class Solution {
+    public int getSum(int a, int b) {
+        int carry = b;
+
+        while(carry!=0){
+            // and operation 
+            int temp = (carry & a) << 1;
+            //  xor operation
+            a= a^carry;
+            carry=temp;
+
+        }
+
+        return a;
+        
+    }
+}
+
+q32.number of bits
+class Solution {
+    public int hammingWeight(int n) {
+        int count=0;
+        while(n!=0){
+            if(n%2!=0){
+                count++;
+            }
+            n=n >> 1;
+
+        }
+
+        return count;
+        
+    }
+}
+
+
+
+q33.Counting bits
+class Solution {
+    public int[] countBits(int n) {
+        int [] arr=new int[n+1];
+        for(int i=0;i<arr.length;i++){
+            int div=i;
+            int count=0;
+            while(div!=0){
+                if(div%2 != 0){
+                    count++;
+                }
+                div=div>>1;
+            }
+            arr[i]=count;
+        }
+
+
+        return arr;
+
+        
+    }
+}
+
+
+
+q34.reverse bits
+// when you got unsigned us pre-defined for loop because of java
+public class Solution {
+    // you need treat n as an unsigned value
+    public int reverseBits(int n) {
+        int answer=0;
+        for(int i=0;i<32;i++){
+            // extract  LSB using and operation
+            int bit = n & 1;
+            // answer left operation and then or operation
+            answer  = (answer << 1) | bit ;
+            // right shift
+            n=n>>1;
+        }
+
+
+        return answer;
+        
+    }
+}
+
+
+
+q35. FIND MISSING NUMBER
+class Solution {
+    public int missingNumber(int[] nums) {
+        int n=nums.length;
+        int x1=0;
+        int x2=0;
+
+        for(int i=0;i<=n;i++){
+            x1=x1^i;
+        }
+
+        
+        for(int i=0;i<n;i++){
+            x2=x2^nums[i];
+        }
+
+
+        return x1^x2;
+    }
+}

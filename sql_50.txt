@@ -179,4 +179,119 @@ FROM Transactions
 GROUP BY month,country
 
 
+q21.
+# Write your MySQL query statement below
+-- step 2 calculate the percentage
+SELECT ROUND((SUM(IF(order_date = customer_pref_delivery_date,1,0))/COUNT(DISTINCT customer_id)) *100,2) as immediate_percentage
+FROM Delivery
+WHERE(customer_Id,order_date) IN (
+    -- step 1 calculate the the first order date
+    SELECT customer_id ,MIN(order_date) as first_order_date
+    FROM Delivery
+    GROUP BY customer_id
+)
+
+
+q22.
+# Write your MySQL query statement below
+
+-- first player id comes from the subquery condition 
+SELECT ROUND(COUNT(DISTINCT player_id) / (SELECT COUNT(DISTINCT player_id)  FROM Activity),2) AS fraction
+FROM Activity
+-- step 1 sub query for day consecutive
+WHERE (player_id,DATE_SUB(event_date ,INTERVAL  1 DAY)) IN (
+    SELECT player_id , MIN(event_date)
+    FROM Activity
+    GROUP BY player_id
+)
+
+
+
+q23.
+# Write your MySQL query statement below
+SELECT teacher_id,COUNT(DISTINCT subject_id) AS cnt
+FROM Teacher
+GROUP BY teacher_id
+ORDER BY cnt
+
+
+q24.
+# Write your MySQL query statement below
+SELECT activity_date AS day ,COUNT(DISTINCT user_id) as active_users
+FROM Activity
+WHERE activity_date >= '2019-06-28'
+AND activity_date <= '2019-07-27'
+GROUP BY activity_date
+
+
+q25.
+# Write your MySQL query statement below
+
+
+SELECT product_id , year as first_year , quantity , price
+FROM Sales
+WHERE (product_id,year) IN (
+-- step 1 subquery for finding the first sale_year
+    SELECT product_id, MIN(year) as f_year
+    FROM Sales
+    GROUP BY product_id
+)
+
+
+q26.
+# Write your MySQL query statement below
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(DISTINCT student) >= 5
+
+
+q27.
+# Write your MySQL query statement below
+SELECT user_id,COUNT(follower_id) AS followers_count
+FROM Followers
+GROUP BY user_id
+ORDER BY user_id
+
+
+
+q28.
+# Write your MySQL query statement below
+SELECT MAX(num) AS num
+FROM MyNumbers
+WHERE num IN (
+    -- sub query tp find the nums occuring only once
+    SELECT num 
+    FROM MyNumbers
+    GROUP BY num
+    HAVING COUNT(num) = 1
+)
+
+
+
+q29.
+# Write your MySQL query statement below
+SELECT customer_id
+FROM Customer
+GROUP BY customer_id
+HAVING COUNT(DISTINCT product_key) = (
+    SELECT COUNT(*)
+    FROM Product
+)
+
+
+
+q30.
+# Write your MySQL query statement below
+-- E1 points to manager E2 points to employees who reports to manager
+SELECT E1.employee_id , E1.name ,COUNT(E2.employee_id) AS reports_count ,ROUND(AVG(E2.age)) AS average_age
+FROM Employees E1
+INNER JOIN Employees E2
+ON E1.employee_id = E2.reports_to
+GROUP BY E1.employee_id , E1.name
+ORDER BY E1.employee_id
+
+
+
+
 
