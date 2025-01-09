@@ -1402,3 +1402,227 @@ class Solution {
         return x1^x2;
     }
 }
+
+
+q36.Word search
+class Solution {
+    int[][] traversal;
+
+    public boolean matrixMove(char[][] board, String word, int current, int x, int y) {
+        // whole word traversal
+        if (current >= word.length()) {
+            return true;
+        }
+
+        // out of bound condition
+        if (x < 0 || y < 0 || x >= board.length || y >=board[0].length) {
+            return false;
+        }
+
+        // word does not match
+        // -1 means traversal already
+        if (board[x][y] != word.charAt(current) || traversal[x][y] == -1) {
+            return false;
+        }
+
+        // forward tracing
+        traversal[x][y] = -1;
+        // movements
+        boolean left = matrixMove(board, word, current + 1, x, y - 1);
+        boolean right = matrixMove(board, word, current + 1, x, y + 1);
+        boolean top = matrixMove(board, word, current + 1, x - 1, y);
+        boolean bottom = matrixMove(board, word, current + 1, x + 1, y);
+        // backward tracing
+        traversal[x][y] = 0;
+
+        return left || right || top || bottom;
+
+    }
+
+    public boolean exist(char[][] board, String word) {
+        int row=board.length;
+        int col=board[0].length;
+        traversal = new int[row][col];
+        for(int i=0;i<row;i++){
+            Arrays.fill(traversal[i],0);
+        }
+
+        
+
+        for(int i=0;i<row;i++){
+            
+            for(int j=0;j<col;j++){
+                boolean val=matrixMove(board,word,0,i,j);
+                if(val) return true;
+            }
+        }
+
+        return false;
+
+    }
+}
+
+
+q37.Non Overlapping Intervals
+class Solution {
+    public int eraseOverlapIntervals(int[][] intervals) {
+        ArrayList<ArrayList<Integer>> intvList=new ArrayList<ArrayList<Integer>>();
+        for(int i=0;i<intervals.length;i++){
+            ArrayList temp=new ArrayList<Integer>();
+            for(int j=0;j<intervals[i].length;j++){
+                temp.add(intervals[i][j]);
+            }
+            intvList.add(temp);
+        }
+
+
+        Comparator<ArrayList<Integer>> cmp=new Comparator<ArrayList<Integer>>(){
+            public int compare(ArrayList<Integer> a,ArrayList<Integer> b){
+                if(a.get(0)==b.get(0)){
+                    return Integer.compare(a.get(1),b.get(1));
+                }
+
+                return Integer.compare(a.get(0),b.get(0));
+            }
+        };
+
+        Collections.sort(intvList,cmp);
+
+
+        int endPoint = intvList.get(0).get(1);
+        int changes=0;
+
+        for(int i = 1;i<intvList.size();i++){
+            int x=intvList.get(i).get(0);
+            int y=intvList.get(i).get(1);
+
+            if(x>=endPoint){
+                // no overlapping
+                endPoint = y;
+            }else{
+                // overlapping
+                changes++;
+                endPoint=Math.min(y,endPoint);
+
+            }
+        }
+       
+
+
+
+        return changes;
+        
+    }
+}
+
+
+q38.Meeting intervals
+/**
+ * Definition of Interval:
+ * public class Interval {
+ *     public int start, end;
+ *     public Interval(int start, int end) {
+ *         this.start = start;
+ *         this.end = end;
+ *     }
+ * }
+ */
+
+
+
+
+class Solution {
+    public boolean canAttendMeetings(List<Interval> intervals) {
+
+        if(intervals.size()==0){
+            return true;
+        }
+
+        Comparator<Interval> cmp=new Comparator<Interval>(){
+            public int compare(Interval a,Interval b){
+                if(a.start==b.start){
+                    return Integer.compare(a.end,b.end);
+                }
+
+                return Integer.compare(a.start,b.start);
+            }
+
+        };
+
+     
+
+        Collections.sort(intervals,cmp);
+        int endPoint=intervals.get(0).end;
+
+        for(int i=1;i<intervals.size();i++){
+            int x=intervals.get(i).start;
+            int y=intervals.get(i).end;
+            if(x<endPoint){
+                return false;
+            }
+            endPoint = y;
+
+
+        }
+
+
+        return true;
+
+    }
+}
+
+
+
+q39.Meeting Rooms II
+/**
+ * Definition of Interval:
+ * public class Interval {
+ *     public int start, end;
+ *     public Interval(int start, int end) {
+ *         this.start = start;
+ *         this.end = end;
+ *     }
+ * }
+ */
+
+class Solution {
+    public int minMeetingRooms(List<Interval> intervals) {
+        int size=intervals.size();
+        // from pictorial representation noticing the timeline
+        int [] start=new int[size];
+        int [] end=new int[size];
+        for(int i=0;i<size;i++){
+            start[i]=intervals.get(i).start;
+            end[i]=intervals.get(i).end;
+        }
+        Arrays.sort(start);
+        Arrays.sort(end);
+
+        int s=0,e=0;
+        int res=0,count=0;
+        
+        // alloting rooms
+        while(s<size){
+            if(start[s] < end[e]) {
+                // new meeting started before an meeting ends
+                // requrie more rooms
+                count++;
+                s++;
+            }else{
+                // meeting ends but not handling the meeting whose start stime is start[s] 
+                // start[s] handled in next meeting
+                // less rooms requirement
+                count--;
+                e++;
+            }
+            res=Math.max(res,count);
+        }
+
+
+        return res;
+    }
+}
+
+
+
+
