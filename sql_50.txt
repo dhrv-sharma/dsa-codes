@@ -425,7 +425,139 @@ WHERE MONTH(created_at) = '02' AND YEAR(created_at)='2020'
 GROUP BY movie_id
 ORDER BY AVG(rating) DESC, title
 LIMIT 1)
- 
+
+
+q40.
+# Write your MySQL query statement below
+SELECT visited_on,(
+    SELECT SUM(amount)
+    FROM Customer
+    WHERE visited_on BETWEEN DATE_SUB(c.visited_on,INTERVAL 6 DAY) AND C.visited_on
+) AS amount,ROUND((
+    SELECT SUM(amount)/7
+    FROM Customer
+    WHERE visited_on BETWEEN DATE_SUB(c.visited_on,INTERVAl 6 DAY) AND C.visited_on
+),2) AS average_amount
+FROM Customer C
+WHERE visited_on >= (
+    -- find the all possible dates which can have 6 day before data
+    SELECT DATE_ADD(MIN(visited_on),INTERVAL 6 DAY)
+    FROM Customer
+)
+GROUP BY visited_on
+ORDER BY visited_on
+
+q41.
+# Write your MySQL query statement below
+SELECT id , COUNT(*) AS num
+FROM (
+    SELECT requester_id as id
+    FROM RequestAccepted
+
+    UNION ALL
+
+    SELECT accepter_id as id
+    FROM RequestAccepted
+
+) AS friend  -- mention as is neccassary for running the code 
+GROUP BY id
+ORDER BY num DESC
+LIMIT 1
+
+
+
+q42.
+# Write your MySQL query statement below
+SELECT ROUND(SUM(tiv_2016),2) as tiv_2016
+FROM Insurance
+WHERE tiv_2015 IN (
+    SELECT tiv_2015
+    FROM Insurance
+    GROUP BY tiv_2015
+    HAVING COUNT(*) > 1
+
+)
+AND (lat,lon) IN (
+    SELECT lat,lon
+    FROM Insurance
+    GROUP BY lat , lon
+    HAVING COUNT(*) = 1
+
+)
+
+
+q43.
+# Write your MySQL query statement below
+SELECT d1.name AS Department , e1.name AS Employee , e1.salary AS Salary
+FROM Employee e1
+INNER JOIN Department d1
+ON e1.departmentId = d1.id
+WHERE 3 > (
+    SELECT COUNT(DISTINCT(e2.salary))
+    FROM Employee e2
+    WHERE e2.salary > e1.salary
+    AND e2.departmentId = e1.departmentId
+)
+
+
+q44.
+# Write your MySQL query statement below
+SELECT user_id , CONCAT(UPPER(LEFT(name,1)),LOWER(RIGHT(name,LENGTH(name) - 1))) as name
+FROM Users
+ORDER BY user_id
+
+
+q45.
+# Write your MySQL query statement below
+SELECT *
+FROM Patients
+WHERE conditions like ('DIAB1%') OR conditions like ('% DIAB1%')
+
+
+q46.
+# Write your MySQL query statement below
+DELETE P1
+FROM Person P1 INNER JOIN Person P2
+ON P1.email = P2.email
+AND P1.id > P2.id
+
+
+q47.
+# Write your MySQL query statement below
+SELECT MAX(e1.salary) as SecondHighestSalary
+FROM Employee e1
+INNER JOIN Employee e2
+ON e1.salary < e2.salary
+
+
+q48.
+# Write your MySQL query statement below
+SELECT sell_date , COUNT(DISTINCT product) AS num_sold , GROUP_CONCAT(
+    DISTINCT product
+    ORDER BY product
+    SEPARATOR ','
+) as products
+FROM Activities
+GROUP BY sell_date
+ORDER BY sell_date 
+
+
+
+q49.
+# Write your MySQL query statement below
+SELECT p1.product_name , SUM(o1.unit) AS unit
+FROM Products p1
+INNER JOIN Orders o1
+ON p1.product_id = o1.product_id
+WHERE MONTH(o1.order_date) =2 AND YEAR(o1.order_date) = '2020'
+GROUP BY p1.product_id
+HAVING SUM(o1.unit) >=100
+
+q50.
+# Write your MySQL query statement below
+SELECT * 
+FROM Users
+WHERE mail REGEXP '^[A-Za-z][A-Za-z0-9_\.\-]*@leetcode[.]com$' 
 
 
 
